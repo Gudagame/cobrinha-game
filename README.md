@@ -20,3 +20,8 @@ Jogos web da Gudagame.
 
 O workflow `.github/workflows/pages.yml` publica o site a cada push na `main`.
 Ativação única: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+
+## Publicação (Netlify)
+
+O `netlify.toml` já configura o build (`_site`) e o atalho `/patinhas`.
+No Netlify: **Add new site → Import an existing project → GitHub → Gudagame/cobrinha-game** e escolha o branch. Não precisa preencher comando nem pasta: vêm do `netlify.toml`.

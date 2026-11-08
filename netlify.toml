@@ -1,0 +1,21 @@
+# Netlify — site estático (Cobrinha + Reino das Patinhas). Sem dependências.
+[build]
+  command = "rm -rf _site && mkdir -p _site && cp index.html _site/ && cp -r reino-das-patinhas _site/"
+  publish = "_site"
+
+# /patinhas leva direto ao Reino das Patinhas
+[[redirects]]
+  from = "/patinhas"
+  to = "/reino-das-patinhas/"
+  status = 301
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/reino-das-patinhas/*"
+  [headers.values]
+    Cache-Control = "public, max-age=300, must-revalidate"
