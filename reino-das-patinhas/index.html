@@ -15,7 +15,7 @@
   --ink:#2b2140; --ink-2:#5a4d75; --cream:#fff8ee; --paper:#ffffff;
   --orange:#ff8a3d; --pink:#ff5c8a; --teal:#2ec4b6; --purple:#7b5cff; --yellow:#ffd23f; --green:#43c463; --red:#ff4d5e; --blue:#3fa7ff;
   --panel:rgba(255,248,238,.96); --panel-dark:rgba(43,33,64,.88); --shadow:0 6px 0 rgba(43,33,64,.18), 0 10px 30px rgba(43,33,64,.25);
-  --radius:18px; --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px); --safe-l:env(safe-area-inset-left,0px); --safe-r:env(safe-area-inset-right,0px);
+  --radius:18px; --lift:0px; --safe-t:env(safe-area-inset-top,0px); --safe-b:env(safe-area-inset-bottom,0px); --safe-l:env(safe-area-inset-left,0px); --safe-r:env(safe-area-inset-right,0px);
   --font-title:'Baloo 2', 'Trebuchet MS', system-ui, sans-serif; --font:'Nunito', system-ui, -apple-system, 'Segoe UI', sans-serif;
 }
 *{box-sizing:border-box}
@@ -61,7 +61,7 @@ button:focus-visible,[tabindex]:focus-visible,select:focus-visible,input:focus-v
 .avatar{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;font-size:1.35rem;border:3px solid #fff;box-shadow:0 2px 0 rgba(0,0,0,.15)}
 .av-dash{background:#c47a45}.av-bolt{background:#f3d9a8}.av-pino{background:#3d2a1e}.av-luna{background:#dfe8ff}
 
-.hud-bottom{position:absolute;left:calc(8px + var(--safe-l));right:calc(8px + var(--safe-r));bottom:calc(8px + var(--safe-b));display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;justify-content:space-between}
+.hud-bottom{position:absolute;left:calc(8px + var(--safe-l));right:calc(8px + var(--safe-r));bottom:calc(8px + var(--safe-b) + var(--lift));display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap;justify-content:space-between}
 #heroBar,#itemBar{display:flex;gap:6px;pointer-events:auto}
 .hero-btn{position:relative;width:64px;height:70px;border-radius:16px;background:var(--panel);box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;overflow:hidden;padding-top:2px}
 .hero-btn .avatar{width:36px;height:36px;font-size:1.15rem;border-width:2px}
@@ -81,7 +81,7 @@ button:focus-visible,[tabindex]:focus-visible,select:focus-visible,input:focus-v
 @keyframes pulse{50%{transform:scale(1.07);box-shadow:0 0 0 6px rgba(255,210,63,.65),0 4px 0 #c75e1c}}
 
 /* ==================== PAINEL INFERIOR (construção / torre) ==================== */
-.sheet{position:fixed;z-index:8;left:50%;transform:translateX(-50%);bottom:calc(88px + var(--safe-b));width:min(620px,calc(100vw - 16px));max-height:min(62vh,520px);overflow:auto;background:var(--panel);border-radius:22px;box-shadow:var(--shadow);padding:12px 14px 14px;animation:sheetIn .2s ease-out}
+.sheet{position:fixed;z-index:8;left:50%;transform:translateX(-50%);bottom:calc(88px + var(--safe-b) + var(--lift));width:min(620px,calc(100vw - 16px));max-height:min(62vh,520px);overflow:auto;background:var(--panel);border-radius:22px;box-shadow:var(--shadow);padding:12px 14px 14px;animation:sheetIn .2s ease-out}
 .sheet[hidden]{display:none}
 @keyframes sheetIn{from{transform:translate(-50%,20px);opacity:0}}
 .sheet h3{margin:0;font-family:var(--font-title);font-size:1.2rem;display:flex;align-items:center;gap:8px}
@@ -148,7 +148,7 @@ button:focus-visible,[tabindex]:focus-visible,select:focus-visible,input:focus-v
 .disclaimer{font-size:.82rem;color:var(--ink-2);margin-top:10px;text-align:center}
 
 /* ==================== TELAS (MENU) ==================== */
-.screen{position:fixed;inset:0;z-index:25;overflow:auto;padding:calc(14px + var(--safe-t)) calc(14px + var(--safe-r)) calc(18px + var(--safe-b)) calc(14px + var(--safe-l));background:linear-gradient(180deg,rgba(43,33,64,.25),rgba(43,33,64,.55))}
+.screen{position:fixed;inset:0;z-index:25;overflow:auto;padding:calc(14px + var(--safe-t)) calc(14px + var(--safe-r)) calc(18px + var(--safe-b) + var(--lift)) calc(14px + var(--safe-l));background:linear-gradient(180deg,rgba(43,33,64,.25),rgba(43,33,64,.55))}
 .screen[hidden]{display:none}
 .wrap{max-width:980px;margin:0 auto}
 .logo{text-align:center;color:#fff;margin:6px 0 10px;text-shadow:0 4px 0 rgba(43,33,64,.5)}
@@ -219,7 +219,7 @@ button:focus-visible,[tabindex]:focus-visible,select:focus-visible,input:focus-v
 .gcard.locked{opacity:.6}
 .tut-hl{animation:tutpulse 1s infinite!important;outline:4px solid var(--yellow)!important;outline-offset:2px;position:relative;z-index:2}
 @keyframes tutpulse{50%{outline-color:#ff8a3d;transform:scale(1.05)}}
-#tutBox{position:fixed;z-index:9;left:calc(10px + var(--safe-l));bottom:calc(96px + var(--safe-b));width:min(420px,calc(100vw - 20px));background:var(--panel);border-radius:18px;box-shadow:var(--shadow);padding:12px 14px;border:3px solid var(--yellow);animation:pop .25s ease-out}
+#tutBox{position:fixed;z-index:9;left:calc(10px + var(--safe-l));bottom:calc(96px + var(--safe-b) + var(--lift));width:min(420px,calc(100vw - 20px));background:var(--panel);border-radius:18px;box-shadow:var(--shadow);padding:12px 14px;border:3px solid var(--yellow);animation:pop .25s ease-out}
 #tutBox[hidden],body.sheet-open #tutBox{display:none}
 #tutBox.flip{bottom:auto;top:calc(64px + var(--safe-t))}
 #tutBox .hd{display:flex;align-items:center;gap:10px}
@@ -228,9 +228,11 @@ button:focus-visible,[tabindex]:focus-visible,select:focus-visible,input:focus-v
 #tutBox p{margin:.5em 0;line-height:1.4;font-size:.95rem}
 #tutBox .bar{height:6px;border-radius:4px;background:#eadfcf;overflow:hidden}
 #tutBox .bar i{display:block;height:100%;background:var(--green);transition:width .3s}
-@media (max-width:640px){#tutBox{bottom:calc(150px + var(--safe-b));max-height:36vh;overflow:auto}#tutBox.flip{top:calc(100px + var(--safe-t));bottom:auto}#tutBox p{font-size:.85rem}body.tut #toasts{left:50%;right:auto;transform:translateX(-50%);width:92vw;align-items:center}}
+@media (max-width:640px){#tutBox{bottom:calc(150px + var(--safe-b) + var(--lift));max-height:36vh;overflow:auto}#tutBox.flip{top:calc(100px + var(--safe-t));bottom:auto}#tutBox p{font-size:.85rem}body.tut #toasts{left:50%;right:auto;transform:translateX(-50%);width:92vw;align-items:center}}
 body.tut #toasts{left:auto;right:calc(12px + var(--safe-r));transform:none;width:min(380px,40vw);align-items:flex-end}
 body.tut #speech{display:none}
+/* Em sites *.netlify.app o selo “Powered by Netlify” ocupa o canto inferior direito: sobe a barra de baixo */
+body.lift{--lift:88px}
 /* ==================== RESPONSIVO ==================== */
 @media (max-width:640px){
   .pill{padding:5px 9px;font-size:.88rem;min-height:34px}
@@ -243,8 +245,8 @@ body.tut #speech{display:none}
   .item-btn{width:40px;height:40px;font-size:1.15rem}
   #bWave{min-width:0;flex:1 1 100%;order:-1}
   .hud-bottom{gap:6px}
-  .sheet{bottom:calc(150px + var(--safe-b));max-height:52vh}
-  #speech{top:auto;bottom:calc(150px + var(--safe-b));max-width:calc(100vw - 20px)}
+  .sheet{bottom:calc(150px + var(--safe-b) + var(--lift));max-height:52vh}
+  #speech{top:auto;bottom:calc(150px + var(--safe-b) + var(--lift));max-width:calc(100vw - 20px)}
   #speech p{font-size:.86rem}
   #bossBar{top:calc(100px + var(--safe-t))}
   #toasts{top:calc(150px + var(--safe-t))}
@@ -269,7 +271,7 @@ body.reduce-motion *{animation-duration:.01ms!important;transition:none!importan
 <div id="hud" hidden>
   <div class="hud-top">
     <div class="pill" id="pLives" title="Vidas do Santuário da Vida">❤️ <b id="vLives">20</b></div>
-    <div class="pill" id="pCoins" title="Moedas de Cuidado">🪙 <b id="vCoins">0</b></div>
+    <div class="pill" id="pCoins" title="Moedas de Cuidado">💰 <b id="vCoins">0</b></div>
     <div class="pill" id="pWave" title="Onda atual">🌊 <b id="vWave">0/10</b></div>
     <div class="pill energy" title="Energia dos heróis">⚡<div class="bar"><i id="vEnergy"></i></div><b id="vEnergyN">50</b></div>
     <div class="pill" id="pWeather" title="Clima">☀️</div>
@@ -1033,7 +1035,7 @@ async function callWave() {
   if (!G || G.state !== 'build' || G.modalOpen || G.over) return;
   const n = G.wave + 1; if (n > G.totalWaves) return;
   if (G.tut) { const st = G.tut.cur; if (!st || st.wave !== n) { toast('👉 Siga o passo do tutorial primeiro'); return; } }
-  if (G.countdown > 0 && G.wave > 0) { const bonus = Math.floor(G.countdown) * 2; if (bonus > 0) { addCoins(bonus); toast(`Chamada antecipada: +${bonus} 🪙`, 'gold'); } }
+  if (G.countdown > 0 && G.wave > 0) { const bonus = Math.floor(G.countdown) * 2; if (bonus > 0) { addCoins(bonus); toast(`Chamada antecipada: +${bonus} 💰`, 'gold'); } }
   G.countdown = -1;
   const ev = G.cfg.events[n];
   if (ev && !G.evDone[n]) {
@@ -1062,7 +1064,7 @@ function startWave(n) {
 function waveCleared() {
   G.state = 'build';
   const bonus = 22 + G.wave * 5; let income = 0;
-  for (const t of G.towers) if (t.def.type === 'econ' && !t.down) { const s = towerStats(t); income += Math.round(s.income); floatText(t.x, 1.2, t.z, `+${Math.round(s.income)}🪙`, 'coin'); }
+  for (const t of G.towers) if (t.def.type === 'econ' && !t.down) { const s = towerStats(t); income += Math.round(s.income); floatText(t.x, 1.2, t.z, `+${Math.round(s.income)}💰`, 'coin'); }
   addCoins(bonus + income);
   if (G.mods.cleanBonus && G.waveLeaks === 0) { G.lives = Math.min(G.maxLives + 5, G.lives + G.mods.cleanBonus); toast('⏰ Rotina em dia: +1 vida', 'teal'); }
   if (G.blockPathWaves > 0) G.blockPathWaves--; if (G.preventionWaves > 0) G.preventionWaves--;
@@ -1073,7 +1075,7 @@ function waveCleared() {
     if (G.waveLeaks >= 3) say('luna', '<b>Dica:</b> concentre torres onde os caminhos se juntam, e use a Fonte da Vida para deixar os inimigos lentos.', 6);
   }
   for (const e of G.enemies) if (e.illusion) removeEnemy(e);
-  toast(`Onda ${G.wave} concluída! +${bonus + income} 🪙`, 'gold');
+  toast(`Onda ${G.wave} concluída! +${bonus + income} 💰`, 'gold');
   if (G.wave >= G.totalWaves) { victory(); return; }
   G.countdown = G.tut ? -1 : 18; if (!G.tut) say(pick(['dash', 'bolt', 'pino', 'luna']), pick(LINES.clear), 3);
   updateHUD(true);
@@ -1160,7 +1162,7 @@ function leak(e) {
     const dmg = e.isBoss ? 6 : e.type === 'chefeHorda' ? 3 : e.clone ? 2 : 1;
     if (G.T.shield > 0) { floatText(e.x, 1.3, e.z, '🧸 Casulo protegeu!', 'heal'); }
     else { G.lives -= dmg; G.waveLeaks += dmg; G.stats.leaks += dmg; Sfx.play('leak'); addShake(0.35); bump('#pLives'); if (rng() < 0.5) say(pick(['bolt', 'luna']), pick(G.lives <= 5 ? LINES.low : LINES.leak), 3); }
-    if (e.def.stealOnLeak) { const s = Math.min(G.coins, e.def.stealOnLeak); G.coins -= s; floatText(e.x, 1.5, e.z, `-${s}🪙`, 'bad'); }
+    if (e.def.stealOnLeak) { const s = Math.min(G.coins, e.def.stealOnLeak); G.coins -= s; floatText(e.x, 1.5, e.z, `-${s}💰`, 'bad'); }
     world3d.sanc.crystal.userData.hurt = 0.5;
   }
   if (e.isBoss) { G.boss = null; $('#bossBar').hidden = true; }
@@ -1229,7 +1231,7 @@ function updateBoss(e, dt) {
   const k = e.boss;
   const nevoa = () => { if (T.a <= 0) { T.a = 8; G.T.rangeDebuff = 4; toast('🌁 Bruma Densa: alcance −30%! Use Luna ou Dash.', ''); ringFx(e.x, e.z, 6, 0x9aa5b1, 1.2); } if (T.b <= 0) { T.b = 12; G.T.upgradeBlock = 4; toast('💭 Esquecimento: melhorias bloqueadas por 4s', ''); } if (T.c <= 0) { T.c = 10; for (let i = 0; i < 2; i++) spawnEnemy('verme', { path: e.pIdx, dist: Math.max(0, e.dist - 0.4 - i * 0.3) }); } };
   const sombra = (mult = 1) => { if (T.a <= 0) { T.a = 7; G.T.panic = 3; toast('🌪️ Pânico! Inimigos acelerados', ''); addShake(0.3); } if (T.b <= 0) { T.b = 10; for (let i = 0; i < 3 * mult; i++) spawnEnemy(k === 'vazio' ? 'estressinho' : 'estressinho', { path: e.pIdx, dist: Math.max(0, e.dist - 0.3 * i), illusion: true, hpOverride: 25 * G.cfg.hpScale }); } if (T.c <= 0) { T.c = 15; const modes = Object.keys(MODE_LABEL); for (const t of G.towers) t.mode = pick(modes); toast('😵 Caos! As miras foram embaralhadas', ''); } };
-  const devorador = () => { if (T.a <= 0) { T.a = 9; freezeTowers(e.hp < e.maxHp * 0.5 ? 4 : 3, 3); } if (T.d <= 0) { T.d = 5; const s = Math.min(G.coins, 8); if (s) { G.coins -= s; floatText(e.x, 1.8, e.z, `-${s}🪙`, 'bad'); } } };
+  const devorador = () => { if (T.a <= 0) { T.a = 9; freezeTowers(e.hp < e.maxHp * 0.5 ? 4 : 3, 3); } if (T.d <= 0) { T.d = 5; const s = Math.min(G.coins, 8); if (s) { G.coins -= s; floatText(e.x, 1.8, e.z, `-${s}💰`, 'bad'); } } };
   if (k === 'nevoa') nevoa();
   else if (k === 'sombraEstresse') sombra(e.hp < e.maxHp * 0.5 ? 2 : 1);
   else if (k === 'devorador') devorador();
@@ -1277,7 +1279,7 @@ function pathCandidates(x, z, range) {
   return out;
 }
 function buildTower(c, r, def) {
-  const cost = towerCost(def); if (G.coins < cost) { toast('Moedas de Cuidado insuficientes 🪙'); return; }
+  const cost = towerCost(def); if (G.coins < cost) { toast('Moedas de Cuidado insuficientes 💰'); return; }
   G.coins -= cost; if (G.mods.freeTower > 0) { G.mods.freeTower--; toast('🎁 Torre gratuita usada!', 'gold'); }
   const vis = buildTowerMesh(def); const x = tileX(c), z = tileZ(r); vis.group.position.set(x, 0.12, z); root.add(vis.group);
   const t = { def, c, r, x, z, level: 1, mode: def.id === 'farol' ? 'strong' : 'first', cd: 0.3, hp: D.LEVEL_SCALE.hp[0], maxHp: D.LEVEL_SCALE.hp[0], down: false, frozenT: 0, stunT: 0, vis, spent: cost, synBonus: {}, synList: [], dmgDone: 0, born: 0, cands: null, traps: 0 };
@@ -1291,7 +1293,7 @@ function buildTower(c, r, def) {
 }
 function upgradeTower(t) {
   if (t.level >= 5) return; if (G.T.upgradeBlock > 0) { toast('💭 O Esquecimento bloqueou as melhorias por instantes!'); return; }
-  const c = upgradeCost(t); if (G.coins < c) { toast('Moedas insuficientes 🪙'); return; }
+  const c = upgradeCost(t); if (G.coins < c) { toast('Moedas insuficientes 💰'); return; }
   G.coins -= c; t.spent += c; t.level++; if (G.mods.upgradeDiscount > 0) G.mods.upgradeDiscount--;
   const ratio = t.hp / t.maxHp; t.maxHp = D.LEVEL_SCALE.hp[t.level - 1]; t.hp = t.maxHp * Math.max(ratio, 0.5);
   setTowerLevelLook(t); Sfx.play('upgrade'); burst(t.x, 0.8, t.z, 0xffd23f, 16, 3); ringFx(t.x, t.z, 1.2, 0xffd23f, 0.5); G.stats.upgrades++;
@@ -1302,7 +1304,7 @@ function sellTower(t) {
   const refund = Math.round(t.spent * G.mods.refund); addCoins(refund); Sfx.play('sell');
   root.remove(t.vis.group); G.towers.splice(G.towers.indexOf(t), 1); G.towerAt[t.r * GW + t.c] = null; G.grid[t.r * GW + t.c] = 0;
   for (const b of G.barriers.filter(b => b.tower === t)) removeBarrier(b); for (const tr of G.traps.filter(x => x.tower === t)) removeTrap(tr);
-  recomputeSynergies(); closeSheet(); floatText(t.x, 1, t.z, `+${refund}🪙`, 'coin');
+  recomputeSynergies(); closeSheet(); floatText(t.x, 1, t.z, `+${refund}💰`, 'coin');
 }
 function damageTower(t, amount) {
   if (G.T.shield > 0 || t.down) return; t.hp -= amount;
@@ -1582,7 +1584,7 @@ function updateHUD(force) {
   const bw = $('#bWave'); let label, sub, dis = false;
   if (G.state === 'wave') { label = `🌊 Onda ${G.wave} em andamento`; sub = `${G.queue.length + G.enemies.filter(e => e.alive && !e.illusion).length} inimigos`; dis = true; }
   else if (G.wave >= G.totalWaves) { label = '🏁 Fim'; sub = ''; dis = true; }
-  else { const n = G.wave + 1; const ev = G.cfg.events[n] && !G.evDone[n] ? { quiz: ' · ❓', choice: ' · ⚖️', bossIntro: ' · 👑' }[G.cfg.events[n]] : ''; label = `▶ Onda ${n}${ev}`; sub = (G.countdown > 0 ? `${Math.ceil(G.countdown)}s · antecipe +${Math.floor(G.countdown) * 2}🪙 · ` : '') + wavePreview(n); }
+  else { const n = G.wave + 1; const ev = G.cfg.events[n] && !G.evDone[n] ? { quiz: ' · ❓', choice: ' · ⚖️', bossIntro: ' · 👑' }[G.cfg.events[n]] : ''; label = `▶ Onda ${n}${ev}`; sub = (G.countdown > 0 ? `${Math.ceil(G.countdown)}s · antecipe +${Math.floor(G.countdown) * 2}💰 · ` : '') + wavePreview(n); }
   if (hudCache.wave !== label + sub) { hudCache.wave = label + sub; bw.firstChild.textContent = label; $('#wavePreview').textContent = sub; bw.disabled = dis; }
   for (const h of D.heroes) {
     const b = hudCache['hb' + h.id] || (hudCache['hb' + h.id] = document.querySelector(`.hero-btn[data-hero=${h.id}]`)); if (!b) continue;
@@ -1631,7 +1633,7 @@ function towerGuide() {
   return showModal(`<h2 id="mTitle">📖 Guia de Torres</h2>
    <p style="font-size:.9rem">${cats.map(c => `<span class="chip" style="background:${CAT_COLOR[c]}">${c}</span> ${CAT_DESC[c]}`).join(' · ')}</p>
    <div class="weak">🧭 <b>Receita simples:</b> 1) <b>Controle</b> no começo do caminho (deixa lento) · 2) <b>Área</b> nas curvas e onde os caminhos se juntam · 3) <b>Ataque</b> perto do Santuário · 4) pelo menos 2 torres com 🦟 para voadores · 5) <b>Suporte</b> no meio do grupo.</div>
-   ${D.towers.map(d => { const lock = G && towerLocked(d); return `<div class="gcard ${lock ? 'locked' : ''}"><div class="row"><span style="font-size:1.8rem">${d.icon}</span><b style="font-family:var(--font-title);font-size:1.05rem">${d.name}</b>${catChip(d)}<span class="spacer"></span><b>🪙${d.cost}</b>${lock ? `<span class="chip">🔒 Mundo ${d.unlockWorld}</span>` : ''}</div>${towerBars(d)}<div class="gw"><div>✅ ${esc(d.good)}</div><div>⛔ ${esc(d.weak)}</div><div>📍 ${esc(d.tip)}</div></div></div>`; }).join('')}
+   ${D.towers.map(d => { const lock = G && towerLocked(d); return `<div class="gcard ${lock ? 'locked' : ''}"><div class="row"><span style="font-size:1.8rem">${d.icon}</span><b style="font-family:var(--font-title);font-size:1.05rem">${d.name}</b>${catChip(d)}<span class="spacer"></span><b>💰${d.cost}</b>${lock ? `<span class="chip">🔒 Mundo ${d.unlockWorld}</span>` : ''}</div>${towerBars(d)}<div class="gw"><div>✅ ${esc(d.good)}</div><div>⛔ ${esc(d.weak)}</div><div>📍 ${esc(d.tip)}</div></div></div>`; }).join('')}
    <div class="actions"><button class="btn block" data-close="1">Entendi!</button></div>`).then(() => { if (G) G.modalOpen = wasOpen; });
 }
 function closeSheet() { $('#sheet').hidden = true; document.body.classList.remove('sheet-open'); if (G) { G.sel = null; G.selTower = null; G.preview = null; } if (world3d) { world3d.sel.visible = false; world3d.range.visible = world3d.rangeFill.visible = false; } }
@@ -1648,7 +1650,7 @@ function statLine(s, def, lvl) {
   const out = []; const ty = def.type;
   if (s.dmg > 0) out.push(`⚔️ ${ty === 'aura' || ty === 'shield' ? s.dmg.toFixed(0) + '/s' : s.dmg.toFixed(0)}`);
   out.push(`🎯 ${s.range.toFixed(1)}`); if (['projectile', 'splash', 'sniper', 'boomerang', 'trap'].includes(ty)) out.push(`⏱️ ${s.rate.toFixed(2)}/s`);
-  if (s.slow) out.push(`🐢 −${Math.round(s.slow * 100)}%`); if (s.heal) out.push(`💚 ${s.heal.toFixed(0)}/s`); if (s.income) out.push(`🪙 +${Math.round(s.income)}/onda`);
+  if (s.slow) out.push(`🐢 −${Math.round(s.slow * 100)}%`); if (s.heal) out.push(`💚 ${s.heal.toFixed(0)}/s`); if (s.income) out.push(`💰 +${Math.round(s.income)}/onda`);
   if (s.barrier) out.push(`🛡️ ${Math.round(s.barrier)}`); if (s.stun) out.push(`💫 ${s.stun.toFixed(1)}s`); if (s.buffRate) out.push(`💗 +${Math.round(s.buffRate * 100)}% cad.`);
   if (def.targets !== 'ground') out.push('🦟 acerta voadores'); return out;
 }
@@ -1667,12 +1669,12 @@ function renderSheet(force) {
       <div class="gw"><div>✅ <b>Bom contra:</b> ${esc(pv.good)}</div><div>⛔ <b>Limitação:</b> ${esc(pv.weak)}</div><div>📍 <b>Onde colocar:</b> ${esc(pv.tip)}</div></div>
       <div class="stats">${statLine(s, pv, 1).map(x => `<span class="stat">${x}</span>`).join('')}</div>
       <div style="font-size:.82rem"><b>🌟 No nível 5:</b> ${esc(pv.lvl5)}</div>${syn ? `<div class="syn">🔗 Sinergias: ${esc(syn)}</div>` : ''}<div class="lesson">📘 ${esc(pv.lesson)}</div>
-      <div class="actions"><button class="btn green ${G.tut && G.tut.cur?.tower === pv.id ? 'tut-hl' : ''}" data-act="build" ${G.coins < cost ? 'disabled' : ''}>Construir · 🪙${cost}</button></div></div>`;
+      <div class="actions"><button class="btn green ${G.tut && G.tut.cur?.tower === pv.id ? 'tut-hl' : ''}" data-act="build" ${G.coins < cost ? 'disabled' : ''}>Construir · 💰${cost}</button></div></div>`;
       showRange(tileX(G.sel.c), tileZ(G.sel.r), s.range * (D.weather[G.weather].range), 0x9ad7ff); }
     const tutT = G.tut && G.tut.cur?.tower;
     sh.innerHTML = `<h3>🏗️ Construir <button class="btn ghost small" data-act="guide" style="margin-left:auto">📖 Guia de torres</button><button class="x" data-act="close" aria-label="Fechar" style="margin-left:6px">✕</button></h3>
      ${nx.icons ? `<div class="nextw">Próxima onda: <b>${nx.icons}</b>${nx.tags.length ? ` · ${nx.tags.join(' · ')}` : ''}</div>` : ''}
-     <div class="tgrid">${list.map(d => { const lock = towerLocked(d), cost = towerCost(d); return `<button class="tcard ${pv && pv.id === d.id ? 'sel' : ''} ${G.coins < cost ? 'poor' : ''} ${lock ? 'locked' : ''} ${tutT === d.id ? 'tut-hl' : ''}" data-tower="${d.id}" ${lock ? 'disabled' : ''} aria-label="${d.name}, ${d.cat}, custa ${cost}${lock ? ', bloqueada' : ''}${rec[d.id] ? ', recomendada' : ''}">${rec[d.id] && !lock ? '<span class="rec" title="Recomendada para a próxima onda">💡</span>' : ''}${d.targets !== 'ground' && !lock ? '<span class="air" title="Acerta voadores">🦟</span>' : ''}<div class="ic">${lock ? '🔒' : d.icon}</div><div class="nm">${d.name}</div><div class="cat" style="color:${CAT_COLOR[d.cat]}">${d.cat}</div><div class="co">${lock ? 'Mundo ' + d.unlockWorld : '🪙' + cost}</div></button>`; }).join('')}</div>${det}`;
+     <div class="tgrid">${list.map(d => { const lock = towerLocked(d), cost = towerCost(d); return `<button class="tcard ${pv && pv.id === d.id ? 'sel' : ''} ${G.coins < cost ? 'poor' : ''} ${lock ? 'locked' : ''} ${tutT === d.id ? 'tut-hl' : ''}" data-tower="${d.id}" ${lock ? 'disabled' : ''} aria-label="${d.name}, ${d.cat}, custa ${cost}${lock ? ', bloqueada' : ''}${rec[d.id] ? ', recomendada' : ''}">${rec[d.id] && !lock ? '<span class="rec" title="Recomendada para a próxima onda">💡</span>' : ''}${d.targets !== 'ground' && !lock ? '<span class="air" title="Acerta voadores">🦟</span>' : ''}<div class="ic">${lock ? '🔒' : d.icon}</div><div class="nm">${d.name}</div><div class="cat" style="color:${CAT_COLOR[d.cat]}">${d.cat}</div><div class="co">${lock ? 'Mundo ' + d.unlockWorld : '💰' + cost}</div></button>`; }).join('')}</div>${det}`;
     sh.hidden = false; document.body.classList.add('sheet-open'); return;
   }
   const t = G.selTower; if (!t) { sh.hidden = true; return; }
@@ -1687,9 +1689,9 @@ function renderSheet(force) {
    ${modes}${t.synList.length ? `<div class="syn">🔗 ${esc(t.synList.join(' · '))}</div>` : ''}${t.heartRate ? `<div class="syn">💗 Coração do Vínculo: +${Math.round(t.heartRate * 100)}% cadência, +${Math.round(t.heartRange * 100)}% alcance</div>` : ''}
    ${ns ? `<div style="margin-top:6px;font-size:.82rem"><b>Próximo nível:</b> <span class="stats" style="display:inline-flex">${up.slice(0, 3).map(x => `<span class="stat up">${x}</span>`).join('')}</span>${t.level === 4 ? `<br><b>🌟 Evolução:</b> ${esc(d.lvl5)}` : ''}</div>` : `<div class="syn" style="background:#fff7d6;border-color:var(--yellow)">🌟 ${esc(d.lvl5)}</div>`}
    <div class="lesson">📘 ${esc(d.lesson)}</div>
-   <div class="actions">${ns ? `<button class="btn green" data-act="up" ${G.coins < uc || G.T.upgradeBlock > 0 ? 'disabled' : ''}>⬆️ Melhorar · 🪙${uc}</button>` : ''}
-   ${t.down ? `<button class="btn teal" data-act="restore" ${G.coins < Math.round(d.cost * 0.25) ? 'disabled' : ''}>💪 Restaurar · 🪙${Math.round(d.cost * 0.25)}</button>` : ''}
-   <button class="btn ghost" data-act="sell">Vender · +🪙${refund}</button></div><div style="font-size:.75rem;color:var(--ink-2);margin-top:6px">Dano causado: ${Math.round(t.dmgDone)}</div></div>`;
+   <div class="actions">${ns ? `<button class="btn green" data-act="up" ${G.coins < uc || G.T.upgradeBlock > 0 ? 'disabled' : ''}>⬆️ Melhorar · 💰${uc}</button>` : ''}
+   ${t.down ? `<button class="btn teal" data-act="restore" ${G.coins < Math.round(d.cost * 0.25) ? 'disabled' : ''}>💪 Restaurar · 💰${Math.round(d.cost * 0.25)}</button>` : ''}
+   <button class="btn ghost" data-act="sell">Vender · +💰${refund}</button></div><div style="font-size:.75rem;color:var(--ink-2);margin-top:6px">Dano causado: ${Math.round(t.dmgDone)}</div></div>`;
   showRange(t.x, t.z, s.range, 0xffd23f); sh.hidden = false; document.body.classList.add('sheet-open');
 }
 $('#sheet').addEventListener('click', e => {
@@ -1755,7 +1757,7 @@ function runQuiz(opt = {}) {
   if (G) G.modalOpen = true;
   const { q } = nextQuestion(); const order = shuffle([0, 1, 2, 3]); const mult = (opt.mult || 1) * (1 + (G ? G.mods.quizMult : 0)) * (G && G.cfg.mods.includes('quiz') ? 2 : 1);
   const coinR = Math.round(40 * mult);
-  const rewardTxt = G ? `Acerte para ganhar 🪙${coinR} + ⚡20 + um Cartão de Cuidado. Errar também ensina (e dá 🪙10).` : 'Acerte para desbloquear o Cartão de Cuidado do tema.';
+  const rewardTxt = G ? `Acerte para ganhar 💰${coinR} + ⚡20 + um Cartão de Cuidado. Errar também ensina (e dá 💰10).` : 'Acerte para desbloquear o Cartão de Cuidado do tema.';
   return new Promise(res => {
     let result = false;
     showModal(quizHTML(q, order, opt.reason || 'Pergunta do Reino', rewardTxt), card => {
@@ -1763,7 +1765,7 @@ function runQuiz(opt = {}) {
         const oi = +b.dataset.oi; result = oi === q.a; card.querySelectorAll('.opt').forEach(x => { x.disabled = true; if (+x.dataset.oi === q.a) x.classList.add('ok'); }); if (!result) b.classList.add('no');
         P.answered++; if (result) P.correct++; if (P.correct >= 10) grant('quiz10'); if (P.correct >= 40) grant('quiz40');
         let rw = '';
-        if (G) { G.stats.asked++; if (result) { G.stats.correct++; addCoins(coinR); G.energy = Math.min(100, G.energy + 20); rw = `+🪙${coinR} · +⚡20`; } else { addCoins(10); rw = '+🪙10'; } }
+        if (G) { G.stats.asked++; if (result) { G.stats.correct++; addCoins(coinR); G.energy = Math.min(100, G.energy + 20); rw = `+💰${coinR} · +⚡20`; } else { addCoins(10); rw = '+💰10'; } }
         const newCard = result && !P.cards.includes(q.card); if (result) unlockCard(q.card);
         Sfx.play(result ? 'correct' : 'wrong'); save();
         const ex = card.querySelector('.explain'); ex.hidden = false;
@@ -1903,7 +1905,7 @@ const TUT = [
   { hero: 'dash', title: 'Sua primeira torre', tile: () => tutTileNearPath(0.36), tower: 'agua', done: () => G.towers.some(t => t.def.id === 'agua'),
     text: 'Toque no <b>quadrado amarelo com a seta</b> e escolha a 💧 <b>Fonte da Vida</b>. Ela atira água e deixa os inimigos <b>lentos</b>.' },
   { hero: 'bolt', title: 'Chame a onda', hl: '#bWave', wave: 1, done: () => G.wave >= 1 && G.state === 'build',
-    text: 'Agora toque em <b>▶ Onda 1</b>. As torres atiram <b>sozinhas</b>! Cada inimigo derrotado dá 🪙 <b>Moedas de Cuidado</b> para construir mais.' },
+    text: 'Agora toque em <b>▶ Onda 1</b>. As torres atiram <b>sozinhas</b>! Cada inimigo derrotado dá 💰 <b>Moedas de Cuidado</b> para construir mais.' },
   { hero: 'luna', title: 'Cada torre tem uma função', tile: () => tutTileNextTo(G.towers.find(t => t.def.id === 'agua')), tower: 'escova', coins: 200, done: () => G.towers.some(t => t.def.id === 'escova'),
     text: 'Toque no quadrado amarelo. Repare nas <b>etiquetas coloridas</b> (<span style="color:#e8394b">Ataque</span>, <span style="color:#e8701f">Área</span>, <span style="color:#2b8ee8">Controle</span>, <span style="color:#2a9d4b">Suporte</span>, <span style="color:#b38600">Economia</span>), nas <b>barras</b> de força e no selo 💡 de recomendada. Construa uma 🪮 <b>Escova Giratória</b> <u>colada</u> na Fonte.' },
   { hero: 'pino', title: 'Sinergia e melhoria', coins: 150, done: () => G.towers.some(t => t.level >= 2),
@@ -2067,6 +2069,7 @@ const NAV = { menu: showMenu, tutorial: startTutorial, towerguide: () => towerGu
 window.__reino = { tileScreen: (c, r) => { _v.set(tileX(c), 0.15, tileZ(r)).project(camera); return [(_v.x + 1) / 2 * innerWidth, (1 - _v.y) / 2 * innerHeight]; }, worldScreen: (x, y, z) => { _v.set(x, y, z).project(camera); return [(_v.x + 1) / 2 * innerWidth, (1 - _v.y) / 2 * innerHeight]; }, G: null, D, get P() { return P; }, startTutorial, tutNext, startLevel, campaignConfig, challengeConfig, callWave, buildTower, useHero, upgradeTower, update: dt => G && update(dt), NAV };
 addEventListener('resize', fitCamera);
 document.addEventListener('visibilitychange', () => { if (document.hidden && G && !G.over && !G.modalOpen) pauseMenu(); });
+if (/\.netlify\.app$/i.test(location.hostname) || /[?&]lift=1/.test(location.search)) document.body.classList.add('lift');
 applyQuality(); fitCamera();
 showMenu();
 renderer.setAnimationLoop(loop);

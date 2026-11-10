@@ -37,13 +37,13 @@ O Reino das Patinhas é um mundo mágico onde cães e gatos vivem em harmonia co
 ```
 
 - **Micro-loop (segundos):** escolher alvo, usar herói, coletar baú.
-- **Loop de onda (30–60 s):** preparar ▶ defender ▶ recompensa. Chamar a onda antes do contador dá bônus (2 🪙/segundo restante).
+- **Loop de onda (30–60 s):** preparar ▶ defender ▶ recompensa. Chamar a onda antes do contador dá bônus (2 💰/segundo restante).
 - **Loop de fase (5–10 min):** 10 ondas, 3 perguntas, 2 escolhas, 2–3 baús, chefão final.
 - **Meta-loop (dias):** desbloquear mundos e torres, completar o álbum, manter a sequência do Desafio Diário.
 
 ## 4. Interface e controles
 
-**HUD (topo):** ❤️ vidas do Santuário · 🪙 Moedas de Cuidado · 🌊 onda atual · ⚡ energia dos heróis · ícone do clima (toque para ver o efeito) · velocidade 1x/2x/3x · pausa.
+**HUD (topo):** ❤️ vidas do Santuário · 💰 Moedas de Cuidado · 🌊 onda atual · ⚡ energia dos heróis · ícone do clima (toque para ver o efeito) · velocidade 1x/2x/3x · pausa.
 **HUD (base):** 4 botões de heróis (com recarga radial, custo de energia e brilho quando prontos) · 3 itens · botão **▶ Onda N** com prévia dos inimigos (ícones ×quantidade) e ícone do evento seguinte (❓/⚖️/👑).
 **Painel inferior (bottom sheet):** ao tocar na grama, aparece a composição da **próxima onda** (🦟 voadores, 🫥 ocultos, 🛡️ blindados…) e a grade de torres com **categoria colorida** (Ataque, Área, Controle, Suporte, Economia), custo, selo 🦟 (acerta voadores) e selo 💡 (**recomendada para a próxima onda**). Tocar uma vez mostra **barras de força** (dano, alcance, velocidade), **“bom contra / limitação / onde colocar”**, alerta se a torre não acerta os voadores que vêm aí e o alcance no mapa; tocar de novo constrói. O botão **📖 Guia de torres** abre a comparação completa com uma “receita” de posicionamento. Ao tocar numa torre: estrelas de nível, estatísticas, prévia do próximo nível, modo de mira, sinergias ativas, lição educativa, Melhorar/Vender/Restaurar.
 **Feedback:** números flutuantes, partículas, anéis de alcance, tremor de câmera (desligável), fala dos heróis, toasts e região `aria-live` para leitores de tela.
@@ -94,7 +94,7 @@ Custo de melhoria para o nível N = custo base × (0,7 · 1,0 · 1,4 · 2,0). Da
 | 4 | 🫧 **Torre Antipulgas** | 85 | Dano triplo contra parasitas | 2.6 → 3.5 | 6 → 22 | 1.6/s | Terrestre + aéreo | Proteção Prolongada: bolhas ricocheteiam para mais 2 parasitas. | Antipulgas e carrapaticidas devem ser usados com regularidade, no produto e dose indicados pelo veterinário. | 1 |
 | 5 | 🧶 **Brinquedo Interativo** | 95 | Confunde (faz recuar) e reduz velocidade | 2.7 → 3.6 | 5 → 18 | 1.1/s | Terrestre + aéreo | Quebra-cabeça Supremo: confusão dura o dobro e atinge 2 alvos. | Brinquedos e desafios mentais previnem tédio, ansiedade e comportamentos destrutivos. | 1 |
 | 6 | 📦 **Caixa de Areia** | 75 | Armadilhas que prendem inimigos terrestres | 2 → 2.9 | 10 → 36 | 0.45/s | Terrestre | Areia Fofinha: armadilhas atingem em área e prendem até 3 inimigos. | Ambiente adequado reduz estresse: caixa limpa, em local calmo, uma a mais que o número de gatos. | 2 |
-| 7 | ⏰ **Relógio da Rotina** | 100 | Gera Moedas de Cuidado a cada onda + pulso de lentidão | 1.8 → 2.7 | +18🪙/onda → +86 | 0.25/s | Terrestre | Rotina de Ouro: renda dobrada e pulso que atordoa. | Horários previsíveis de comida, passeio e brincadeira deixam o pet mais seguro e menos estressado. | 2 |
+| 7 | ⏰ **Relógio da Rotina** | 100 | Gera Moedas de Cuidado a cada onda + pulso de lentidão | 1.8 → 2.7 | +18💰/onda → +86 | 0.25/s | Terrestre | Rotina de Ouro: renda dobrada e pulso que atordoa. | Horários previsíveis de comida, passeio e brincadeira deixam o pet mais seguro e menos estressado. | 2 |
 | 8 | 🩺 **Torre Veterinária** | 120 | Cura torres e revela inimigos ocultos | 2.2 → 3.1 | cura 6/s → 13/s | 1/s | Terrestre + aéreo | Check-up Completo: inimigos revelados recebem +35% de dano. | Check-ups preventivos (anuais para adultos, semestrais para idosos) identificam problemas cedo. | 2 |
 | 9 | 🦴 **Osso Bumerangue** | 100 | Dano em linha (ida e volta) | 3 → 3.9 | 13 → 47 | 0.6/s | Terrestre | Super Buscar: lança dois ossos em direções diferentes. | Brincadeiras e exercícios diários, adequados à idade e à raça, fortalecem corpo e mente. | 3 |
 | 10 | 💉 **Vacina Escudo** | 110 | Ergue barreiras no caminho e quebra armaduras | 2 → 2.9 | 4 → 14/s | 0.2/s | Terrestre | Imunidade de Rebanho: barreiras curam as torres próximas. | Vacinas em dia protegem seu pet e os outros animais. Siga o calendário indicado pelo veterinário. | 3 |
@@ -226,7 +226,7 @@ Vida escala por mundo (×1 → ×2,7), por onda (×1,07 por onda) e pela dificul
 
 ## 8. As 40 perguntas educativas
 
-Recompensa padrão: **acerto = 🪙40 + ⚡20 + Cartão de Cuidado do tema** (×2 em baús; +50% com a relíquia Apostila). **Erro = 🪙10** e mensagem de incentivo (“Quase! Agora você sabe — e isso já protege seu pet.”). As alternativas são embaralhadas a cada exibição.
+Recompensa padrão: **acerto = 💰40 + ⚡20 + Cartão de Cuidado do tema** (×2 em baús; +50% com a relíquia Apostila). **Erro = 💰10** e mensagem de incentivo (“Quase! Agora você sabe — e isso já protege seu pet.”). As alternativas são embaralhadas a cada exibição.
 
 **1. [Alimentos tóxicos] Qual alimento pode ser tóxico para cães?**
 A) Maçã sem sementes · B) Chocolate · C) Cenoura cozida · D) Abóbora cozida
@@ -430,7 +430,7 @@ Obtidos ao acertar perguntas do tema, em baús secretos (Visão de Túnel do Das
 
 ## 10. Sistema de itens e melhorias
 
-**Moedas de Cuidado 🪙 (dentro da fase):** abates, bônus de onda (22 + 5×onda), Relógio da Rotina, perguntas, chamada antecipada. Gastas em torres e melhorias.
+**Moedas de Cuidado 💰 (dentro da fase):** abates, bônus de onda (22 + 5×onda), Relógio da Rotina, perguntas, chamada antecipada. Gastas em torres e melhorias.
 
 **Patinhas do Saber 🐾 (entre fases):** 10 por estrela + 3 por acerto + 20 na primeira vitória (×1,5 Diário, ×2 Semanal); +1 por acerto na Clínica; +5 por conquista.
 
@@ -510,7 +510,7 @@ Ao vencer: +30 🐾, 1 Cartão de Cuidado e o botão **“Começar a Campanha �
 
 ### 12.2 Fase 1 — Campina dos Filhotes
 
-**Mapa:** 18×11 casas, céu limpo. Portal à esquerda; o caminho se divide em **Trilha Norte** (longa, segura) e **Trilha Sul ⚠️** (curta, +50% moedas). Dois túneis por onde surgem Vermes Escondidos. Santuário à direita, com os 4 heróis. **Recursos:** 230 🪙, 20 ❤️, 50 ⚡. **Torres:** Fonte da Vida, Tigela, Escova, Antipulgas, Brinquedo.
+**Mapa:** 18×11 casas, céu limpo. Portal à esquerda; o caminho se divide em **Trilha Norte** (longa, segura) e **Trilha Sul ⚠️** (curta, +50% moedas). Dois túneis por onde surgem Vermes Escondidos. Santuário à direita, com os 4 heróis. **Recursos:** 230 💰, 20 ❤️, 50 ⚡. **Torres:** Fonte da Vida, Tigela, Escova, Antipulgas, Brinquedo.
 
 | Onda | Inimigos | Evento | Roteiro / falas | Ensina |
 |---|---|---|---|---|
@@ -570,7 +570,7 @@ Ao vencer: +30 🐾, 1 Cartão de Cuidado e o botão **“Começar a Campanha �
 | Sinal observado | Ajuste |
 |---|---|
 | Vazamentos na onda | Vida dos próximos inimigos −3,5% por vida perdida (até −10,5%/onda) + dica da Luna |
-| Onda perfeita com vidas cheias e >250 🪙 | +3% de vida nos inimigos |
+| Onda perfeita com vidas cheias e >250 💰 | +3% de vida nos inimigos |
 | Onda limpa normal | +1,2% |
 | Derrota | Próxima tentativa começa 10% mais fácil |
 | Vitória com 3 ⭐ | Próxima fase +3% |
