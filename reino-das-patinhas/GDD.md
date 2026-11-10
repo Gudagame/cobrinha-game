@@ -45,7 +45,7 @@ O Reino das Patinhas é um mundo mágico onde cães e gatos vivem em harmonia co
 
 **HUD (topo):** ❤️ vidas do Santuário · 🪙 Moedas de Cuidado · 🌊 onda atual · ⚡ energia dos heróis · ícone do clima (toque para ver o efeito) · velocidade 1x/2x/3x · pausa.
 **HUD (base):** 4 botões de heróis (com recarga radial, custo de energia e brilho quando prontos) · 3 itens · botão **▶ Onda N** com prévia dos inimigos (ícones ×quantidade) e ícone do evento seguinte (❓/⚖️/👑).
-**Painel inferior (bottom sheet):** ao tocar na grama, grade de torres com custo; tocar uma vez mostra detalhes + alcance no mapa, tocar de novo constrói. Ao tocar numa torre: estrelas de nível, estatísticas, prévia do próximo nível, modo de mira, sinergias ativas, lição educativa, Melhorar/Vender/Restaurar.
+**Painel inferior (bottom sheet):** ao tocar na grama, aparece a composição da **próxima onda** (🦟 voadores, 🫥 ocultos, 🛡️ blindados…) e a grade de torres com **categoria colorida** (Ataque, Área, Controle, Suporte, Economia), custo, selo 🦟 (acerta voadores) e selo 💡 (**recomendada para a próxima onda**). Tocar uma vez mostra **barras de força** (dano, alcance, velocidade), **“bom contra / limitação / onde colocar”**, alerta se a torre não acerta os voadores que vêm aí e o alcance no mapa; tocar de novo constrói. O botão **📖 Guia de torres** abre a comparação completa com uma “receita” de posicionamento. Ao tocar numa torre: estrelas de nível, estatísticas, prévia do próximo nível, modo de mira, sinergias ativas, lição educativa, Melhorar/Vender/Restaurar.
 **Feedback:** números flutuantes, partículas, anéis de alcance, tremor de câmera (desligável), fala dos heróis, toasts e região `aria-live` para leitores de tela.
 
 | Ação | Celular | PC |
@@ -63,6 +63,26 @@ O Reino das Patinhas é um mundo mágico onde cães e gatos vivem em harmonia co
 **Responsivo:** em tela vertical a câmera gira 90° para o mapa ocupar a altura; respeita *safe areas* (notch). **Acessibilidade:** alvos ≥44 px, foco visível, modais com `role=dialog`, textos alternativos, tamanho de texto ajustável, “reduzir movimento”, ícones + texto (não depende só de cor).
 
 ## 5. As 12 torres
+
+**Categorias (cores na interface):** 🔴 Ataque (tiro forte em um alvo) · 🟠 Área (vários de uma vez) · 🔵 Controle (deixa lento/prende) · 🟢 Suporte (ajuda outras torres) · 🟡 Economia (gera moedas).
+**Receita simples mostrada no Guia:** Controle no começo do caminho → Área nas curvas e junções → Ataque perto do Santuário → pelo menos 2 torres que acertam voadores → Suporte no meio do grupo.
+
+| Torre | Categoria | Dano | Alcance | Velocidade | Acerta voadores? | Bom contra | Limitação | Onde colocar |
+|---|---|---|---|---|---|---|---|---|
+| 💧 Fonte da Vida | Controle | ●●○○○ | ●●●○○ | ●●●○○ | ✅ | Inimigos rápidos e Calorão (dano x2). Acerta voadores. | Pouco dano contra inimigos com muita vida. | Coloque no começo do caminho: deixa todo mundo lento para as outras torres. |
+| 🥣 Tigela Equilibrada | Área | ●●○○○ | ●●●○○ | ●●○○○ | ❌ | Grupos de inimigos juntinhos (pulgas, vermes). | Não acerta voadores. | Ótima onde os dois caminhos se juntam. |
+| 🪮 Escova Giratória | Área | ●●●●○ | ●○○○○ | ●●●●● | ❌ | Tudo que passa colado nela; Nózinho leva dano x2. | Alcance bem curto. Não acerta voadores. | Coloque encostada numa curva do caminho. |
+| 🫧 Torre Antipulgas | Ataque | ●●○○○ | ●●●○○ | ●●●●○ | ✅ | Parasitas (pulga, carrapato, verme, sarna, lombriga): dano x3. Acerta voadores. | Fraca contra quem não é parasita. | A melhor torre dos mundos 1 e 2. |
+| 🧶 Brinquedo Interativo | Controle | ●○○○○ | ●●●○○ | ●●●○○ | ✅ | Faz inimigos andarem para trás e ficarem lentos. Acerta voadores. | Dano baixo: precisa de torres de ataque por perto. | Combine com o Osso Bumerangue (sinergia). |
+| 📦 Caixa de Areia | Controle | ●●○○○ | ●●○○○ | ●○○○○ | ❌ | Prende inimigos terrestres no lugar. | Não acerta voadores. | Perto de torres de área: inimigo preso = alvo fácil. |
+| ⏰ Relógio da Rotina | Economia | — | ●●○○○ | ●○○○○ | ❌ | Gera moedas no fim de cada onda. | Não causa dano. | Construa cedo: quanto antes, mais rende. |
+| 🩺 Torre Veterinária | Suporte | — | ●●○○○ | — | ✅ | Revela inimigos ocultos e cura torres desanimadas. | Não causa dano. | No meio das torres, perto de onde passam ocultos. |
+| 🦴 Osso Bumerangue | Área | ●●●○○ | ●●●○○ | ●●○○○ | ❌ | Filas de inimigos em retas longas (atravessa todos). | Não acerta voadores. | Mire ao longo de uma reta do caminho. |
+| 💉 Vacina Escudo | Suporte | ●○○○○ | ●●○○○ | ●○○○○ | ❌ | Barreira segura inimigos e tira a armadura deles. | Pouco dano direto. | Perto do Santuário, como última linha de defesa. |
+| 💗 Coração do Vínculo | Suporte | — | ●●○○○ | — | ✅ | Torres vizinhas atiram mais rápido e mais longe. | Não causa dano. | Cercada por várias torres de ataque. |
+| 🔦 Farol Sentinela | Ataque | ●●●●● | ●●●●● | ●○○○○ | ✅ | Voadores, chefões e ocultos. Ignora noite e neblina. | Atira devagar. | Um ou dois por mapa resolvem muitos problemas. |
+
+
 
 Custo de melhoria para o nível N = custo base × (0,7 · 1,0 · 1,4 · 2,0). Dano ×1 → ×1,45 → ×2 → ×2,7 → ×3,6; alcance +0,2/nível; cadência até ×1,45. Vender devolve 70%. Torres têm **Ânimo** (vida): ficam “desanimadas” 😴 se o Tédio/veneno as atingir e se recuperam com Veterinária, Olhar Lunar ou “Restaurar”.
 
@@ -465,7 +485,30 @@ Obtidos ao acertar perguntas do tema, em baús secretos (Visão de Túnel do Das
 | 8:30–10:00 | Onda 10 | 👑 Apresentação do chefão (ataques + fraqueza) e batalha | Clímax 2 |
 | 10:00 | Resultado | ⭐, 🐾, cartões, 3 dicas reais, aviso veterinário | Orgulho/aprendizado |
 
-## 12. Roteiro detalhado da Fase 1 — Campina dos Filhotes
+## 12. Tutorial jogável e roteiro da Fase 1
+
+### 12.1 Tutorial — “Jardim do Treino” (3–5 min)
+
+Partida curta e guiada, oferecida na primeira vez que o jogador abre a Campanha (e sempre disponível no menu). Uma caixa com o herói da vez explica cada passo, mostra o progresso (Passo N/12) e só avança quando o jogador **faz** a ação. Um quadrado amarelo com seta marca onde tocar e os botões relevantes pulsam. Não há contagem automática entre ondas no tutorial.
+
+| Passo | Herói | O que ensina | Avança quando |
+|---|---|---|---|
+| 1. Bem-vindo ao Reino | Dash | Apresenta o portal, o caminho, o Santuário e os heróis nos pedestais (que pulam) | Botão “Vamos lá!” |
+| 2. Sua primeira torre | Dash | Construir a 💧 Fonte da Vida no quadrado marcado | Fonte construída |
+| 3. Chame a onda | Bolt | ▶ Onda 1 (4 pulgas); moedas por abate | Onda limpa |
+| 4. Cada torre tem uma função | Luna | Categorias, barras, selo 💡, Guia; construir a 🪮 Escova colada na Fonte | Escova construída |
+| 5. Sinergia e melhoria | Pino | Linha rosa 🔗 “Banho & Escovação”; ⬆️ Melhorar uma torre | Torre nível 2 |
+| 6. Visão de Túnel | Dash | Vermes ocultos saem dos buracos; usar Dash (tecla 1) — dica “Agora!” quando surgem | Dash usado + onda limpa |
+| 7. Inimigos voadores | Luna | Mosquitos; selo 🦟; construir 🫧 Antipulgas | Onda 3 limpa |
+| 8. Investida Relâmpago | Pino | Gordurinhas; usar Pino (tecla 3) | Pino usado + onda limpa |
+| 9. Casulo + Olhar Lunar | Luna | Sombra do Tédio desanima torres; Bolt + Luna = combo Escudo Lunar | Bolt e Luna usados + onda limpa |
+| 10. Baús e perguntas | Dash | Baú surge marcado; pergunta educativa; item e cartão | Baú aberto |
+| 11. Escolhas estratégicas | Bolt | Escolha “Construir × Melhorar” | Opção escolhida |
+| 12. Último teste: chefão! | Luna | Chefe de Horda; velocidade, itens e Harmonia do Reino | Vitória |
+
+Ao vencer: +30 🐾, 1 Cartão de Cuidado e o botão **“Começar a Campanha ▶”**.
+
+### 12.2 Fase 1 — Campina dos Filhotes
 
 **Mapa:** 18×11 casas, céu limpo. Portal à esquerda; o caminho se divide em **Trilha Norte** (longa, segura) e **Trilha Sul ⚠️** (curta, +50% moedas). Dois túneis por onde surgem Vermes Escondidos. Santuário à direita, com os 4 heróis. **Recursos:** 230 🪙, 20 ❤️, 50 ⚡. **Torres:** Fonte da Vida, Tigela, Escova, Antipulgas, Brinquedo.
 
@@ -501,6 +544,18 @@ Obtidos ao acertar perguntas do tema, em baús secretos (Visão de Túnel do Das
 
 **Paleta base:** Tinta `#2B2140` · Creme `#FFF8EE` · Laranja `#FF8A3D` · Rosa `#FF5C8A` · Turquesa `#2EC4B6` · Roxo `#7B5CFF` · Amarelo `#FFD23F`.
 **Paleta por mundo:** Campina (verdes `#7CCF6A`, céu `#BFE8FF`) · Bosque (verde-água `#4FAE8C`, chuva) · Pântano (oliva `#6F8F6A`, lilás) · Cidade (azul-ardósia `#5D6D8A`, janelas amarelas) · Abismo (violeta `#4A3F6B`, cristais).
+
+**Cenários com identidade própria (mesmas rotas, visuais bem diferentes):**
+
+| Mundo | Tabuleiro | Caminho | Entorno | Animação ambiente |
+|---|---|---|---|---|
+| Campina | Grama xadrez clara | Terra com pedrinhas | Cerca branca, árvores, flores, lagoa | Nuvens passando |
+| Bosque | Musgo irregular | Terra escura com pedras | Floresta densa de pinheiros, troncos, cogumelos | Vaga-lumes, chuva |
+| Pântano | Ilhotas hexagonais sobre lama | Passarela de madeira com estacas | Lago, vitórias-régias, árvores secas, juncos | Água ondulando, folhas boiando, neblina |
+| Cidade | Calçadas cinza em placas | Asfalto com faixa amarela tracejada | Prédios com janelas acesas, postes, carros | Noite urbana |
+| Abismo | Plataforma flutuante escura | Trilha roxa luminosa | Estrelas, rochas flutuantes com cristais, obeliscos | Rochas flutuando, trilha pulsando, tempestade |
+
+**Heróis em destaque:** os 4 heróis ficam em **pedestais** ao lado do Santuário, em tamanho maior, com **plaquinha de nome** colorida e anel luminoso que **pisca quando o poder está pronto** (e esmaece na recarga).
 
 **Animações:** torres “brotam” com *squash & stretch*; escova gira; farol pulsa; inimigos balançam ao andar, pulgas saltam, mosquitos batem asas; heróis abanam o rabo e pulam ao usar poderes; Pino corre pelo caminho na Investida; chefões têm aura girando. Câmera treme (trauma²) em vazamentos e chefões.
 

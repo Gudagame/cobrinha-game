@@ -204,6 +204,33 @@ button:focus-visible,[tabindex]:focus-visible,select:focus-visible,input:focus-v
 @keyframes bounce{50%{transform:translateY(-14px)}}
 #loading[hidden]{display:none}
 
+
+.tcard .cat{font-size:.66rem;font-weight:800;text-transform:uppercase;letter-spacing:.3px}
+.tcard .rec{position:absolute;top:3px;right:4px;font-size:.9rem}
+.tcard .air{position:absolute;top:3px;left:4px;font-size:.75rem;opacity:.8}
+.barsg{display:grid;grid-template-columns:auto 1fr;gap:3px 10px;align-items:center;font-size:.8rem;font-weight:800;margin:8px 0}
+.pips i{display:inline-block;width:16px;height:9px;border-radius:5px;background:#eadfcf;margin-right:3px}
+.pips i.on{background:linear-gradient(90deg,var(--orange),var(--yellow))}
+.gw{display:grid;gap:3px;font-size:.84rem;line-height:1.3;margin:4px 0}
+.recbox{background:#fff7d6;border-left:4px solid var(--yellow);padding:5px 10px;border-radius:8px;margin-top:6px;font-size:.85rem}
+.warn{background:#ffe3e6;border-left:4px solid var(--red);padding:5px 10px;border-radius:8px;margin-top:6px;font-size:.85rem}
+.nextw{margin-top:6px;font-size:.85rem;font-weight:700;background:#fff;border-radius:10px;padding:5px 10px}
+.gcard{background:#fff;border-radius:14px;padding:10px 12px;margin:8px 0;box-shadow:0 3px 0 #e2d5c2}
+.gcard.locked{opacity:.6}
+.tut-hl{animation:tutpulse 1s infinite!important;outline:4px solid var(--yellow)!important;outline-offset:2px;position:relative;z-index:2}
+@keyframes tutpulse{50%{outline-color:#ff8a3d;transform:scale(1.05)}}
+#tutBox{position:fixed;z-index:9;left:calc(10px + var(--safe-l));bottom:calc(96px + var(--safe-b));width:min(420px,calc(100vw - 20px));background:var(--panel);border-radius:18px;box-shadow:var(--shadow);padding:12px 14px;border:3px solid var(--yellow);animation:pop .25s ease-out}
+#tutBox[hidden],body.sheet-open #tutBox{display:none}
+#tutBox.flip{bottom:auto;top:calc(64px + var(--safe-t))}
+#tutBox .hd{display:flex;align-items:center;gap:10px}
+#tutBox .hd b{font-family:var(--font-title)}
+#tutBox .prog{margin-left:auto;font-size:.75rem;font-weight:800;color:var(--ink-2)}
+#tutBox p{margin:.5em 0;line-height:1.4;font-size:.95rem}
+#tutBox .bar{height:6px;border-radius:4px;background:#eadfcf;overflow:hidden}
+#tutBox .bar i{display:block;height:100%;background:var(--green);transition:width .3s}
+@media (max-width:640px){#tutBox{bottom:calc(150px + var(--safe-b));max-height:36vh;overflow:auto}#tutBox.flip{top:calc(100px + var(--safe-t));bottom:auto}#tutBox p{font-size:.85rem}body.tut #toasts{left:50%;right:auto;transform:translateX(-50%);width:92vw;align-items:center}}
+body.tut #toasts{left:auto;right:calc(12px + var(--safe-r));transform:none;width:min(380px,40vw);align-items:flex-end}
+body.tut #speech{display:none}
 /* ==================== RESPONSIVO ==================== */
 @media (max-width:640px){
   .pill{padding:5px 9px;font-size:.88rem;min-height:34px}
@@ -403,12 +430,12 @@ function applyQuality() {
 }
 
 /* Câmera isométrica com rotação limitada, zoom e arrasto */
-const cam = { yaw: 0, baseYaw: 0, pitch: 0.98, zoom: 1, fit: 22, target: new THREE.Vector3(0.4, 0, 0.5), shake: 0, menu: false };
+const cam = { yaw: 0, baseYaw: 0, pitch: 0.98, zoom: 1, fit: 22, target: new THREE.Vector3(0.9, 0, 0.5), shake: 0, menu: false };
 function fitCamera() {
   const w = innerWidth, h = innerHeight, aspect = w / h; camera.aspect = aspect; camera.updateProjectionMatrix();
-  const portrait = aspect < 0.9; const newBase = portrait ? Math.PI / 2 : 0;
+  const portrait = aspect < 0.9; const newBase = portrait ? -Math.PI / 2 : 0; // em pé: Santuário e heróis no alto da tela
   if (newBase !== cam.baseYaw) { cam.baseYaw = newBase; cam.yaw = newBase; }
-  const mapW = portrait ? 13 : 22, mapH = portrait ? 22 : 13;
+  const mapW = portrait ? 13 : 25, mapH = portrait ? 25 : 13;
   const t = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2));
   const dW = (mapW / 2) / (t * aspect), dH = (mapH * Math.sin(cam.pitch) * 0.5 + 2.2) / t;
   cam.fit = Math.max(dW, dH) * 1.04; renderer.setSize(w, h, false);
@@ -683,22 +710,37 @@ function buildPortal() {
   for (let i = 0; i < 6; i++) put(g, mesh(geo('pst', () => new THREE.DodecahedronGeometry(0.16, 0)), mat(0x5d4b6e)), Math.cos(i) * 0.75, 0.08, Math.sin(i * 1.7) * 0.4);
   return { group: g, ring, disc };
 }
-function buildDeco(kind, pal, r) {
+function buildDeco(kind, pal, r, opt = {}) {
   const g = new THREE.Group(); const dm = mat(pal.deco);
-  if (kind === 'tree') { put(g, mesh(G_CYL(0.07, 0.1, 0.4, 6), mat(0x8d5a3b)), 0, 0.2); put(g, mesh(geo('ico1', () => new THREE.IcosahedronGeometry(0.38, 0)), dm), 0, 0.68); put(g, mesh(geo('ico2', () => new THREE.IcosahedronGeometry(0.26, 0)), mat(pal.deco, { color: new THREE.Color(pal.deco).offsetHSL(0, 0, 0.08) })), 0.08, 0.95, 0.05); }
-  else if (kind === 'pine') { put(g, mesh(G_CYL(0.06, 0.08, 0.3, 6), mat(0x8d5a3b)), 0, 0.15); for (let i = 0; i < 3; i++) put(g, mesh(G_CONE(0.42 - i * 0.1, 0.45, 7), dm), 0, 0.45 + i * 0.28); }
-  else if (kind === 'rock') put(g, mesh(geo('dod', () => new THREE.DodecahedronGeometry(0.3, 0)), mat(0xa29bb0)), 0, 0.15, 0, 1, 0.7, 1);
+  if (kind === 'tree') { put(g, mesh(G_CYL(0.07, 0.1, 0.4, 6), mat(0x8d5a3b)), 0, 0.2); put(g, mesh(geo('ico1', () => new THREE.IcosahedronGeometry(0.38, 0)), dm), 0, 0.68); put(g, mesh(geo('ico2', () => new THREE.IcosahedronGeometry(0.26, 0)), mat(new THREE.Color(pal.deco).offsetHSL(0, 0, 0.08).getHex())), 0.08, 0.95, 0.05); }
+  else if (kind === 'pine') { put(g, mesh(G_CYL(0.06, 0.08, 0.3, 6), mat(0x6b4a33)), 0, 0.15); for (let i = 0; i < 3; i++) put(g, mesh(G_CONE(0.42 - i * 0.1, 0.45, 7), mat(new THREE.Color(pal.deco).offsetHSL(0, 0, -0.03 + i * 0.03).getHex())), 0, 0.45 + i * 0.28); }
+  else if (kind === 'rock') put(g, mesh(geo('dod', () => new THREE.DodecahedronGeometry(0.3, 0)), mat(opt.rock || 0xa29bb0)), 0, 0.15, 0, 1, 0.7, 1);
   else if (kind === 'bush') { put(g, mesh(geo('ico3', () => new THREE.IcosahedronGeometry(0.28, 0)), dm), 0, 0.2); put(g, mesh(G_SPH(0.06, 6, 4), mat(0xff7aa8)), 0.15, 0.38, 0.1); put(g, mesh(G_SPH(0.06, 6, 4), mat(0xffd23f)), -0.12, 0.35, -0.1); }
-  else if (kind === 'mushroom') { put(g, mesh(G_CYL(0.06, 0.08, 0.25, 6), mat(0xfff1dc)), 0, 0.12); put(g, mesh(geo('cap', () => new THREE.SphereGeometry(0.22, 8, 5, 0, Math.PI * 2, 0, Math.PI / 2)), mat(0xff4d5e)), 0, 0.24); }
-  else if (kind === 'reed') { for (let i = 0; i < 4; i++) put(g, mesh(G_CYL(0.02, 0.03, 0.6, 4), dm), (i - 1.5) * 0.08, 0.3, Math.sin(i) * 0.08); put(g, mesh(G_CYL(0.3, 0.3, 0.02, 10), mat(0x6fa8b8, { roughness: 0.15 })), 0, 0.02); }
-  else if (kind === 'house') { const h = 0.5 + r() * 0.7; put(g, mesh(G_BOX(0.7, h, 0.7), mat(0x8a93b8)), 0, h / 2); for (let i = 0; i < 2; i++) put(g, mesh(G_BOX(0.14, 0.12, 0.02), mat(0xfff27a, { emissive: 0xffd23f, emissiveIntensity: 1 }), false), -0.15 + i * 0.3, h * 0.65, 0.36); put(g, mesh(G_CONE(0.55, 0.35, 4), mat(0xff8a3d)), 0, h + 0.17).rotation.y = Math.PI / 4; }
-  else if (kind === 'lamp') { put(g, mesh(G_CYL(0.03, 0.04, 0.9, 5), mat(0x3a4660)), 0, 0.45); put(g, mesh(G_SPH(0.09), mat(0xfff27a, { emissive: 0xffe14a, emissiveIntensity: 1.4 })), 0, 0.92); }
-  else if (kind === 'crystal') { put(g, mesh(geo('oct2', () => new THREE.OctahedronGeometry(0.25, 0)), mat(0xb388ff, { emissive: 0x7b2cff, emissiveIntensity: 0.7 })), 0, 0.35, 0, 0.8, 1.6, 0.8); put(g, mesh(geo('oct2', () => new THREE.OctahedronGeometry(0.25, 0)), mat(0xff8fb8, { emissive: 0xff2d6a, emissiveIntensity: 0.5 })), 0.2, 0.2, 0.1, 0.5, 1, 0.5); }
+  else if (kind === 'mushroom') { put(g, mesh(G_CYL(0.06, 0.08, 0.25, 6), mat(0xfff1dc)), 0, 0.12); put(g, mesh(geo('cap', () => new THREE.SphereGeometry(0.22, 8, 5, 0, Math.PI * 2, 0, Math.PI / 2)), mat(r() < 0.5 ? 0xff4d5e : 0xb388ff)), 0, 0.24); }
+  else if (kind === 'reed') { for (let i = 0; i < 5; i++) { const h = 0.4 + r() * 0.4; put(g, mesh(G_CYL(0.02, 0.03, h, 4), dm), (i - 2) * 0.08, h / 2, Math.sin(i * 2) * 0.1); put(g, mesh(G_CYL(0.04, 0.04, 0.14, 5), mat(0x7a4a2a)), (i - 2) * 0.08, h, Math.sin(i * 2) * 0.1); } }
+  else if (kind === 'house') { const h = opt.h || 0.5 + r() * 0.7; const col = opt.col || pick([0x8a93b8, 0xc98bb9, 0x7fb3c9, 0xd9a066, 0x9fb88a]); put(g, mesh(G_BOX(0.8, h, 0.8), mat(col)), 0, h / 2); const rows = Math.max(1, Math.floor(h / 0.45)); for (let k = 0; k < rows; k++) for (let i = 0; i < 2; i++) { const lit = r() < 0.75; put(g, mesh(G_BOX(0.15, 0.13, 0.02), lit ? mat(0xfff27a, { emissive: 0xffd23f, emissiveIntensity: 1.1 }) : mat(0x3a4660), false), -0.17 + i * 0.34, 0.3 + k * 0.42, 0.41); }
+    if (h < 1.3) put(g, mesh(G_CONE(0.62, 0.38, 4), mat(0xff8a3d)), 0, h + 0.19).rotation.y = Math.PI / 4; else put(g, mesh(G_BOX(0.3, 0.2, 0.3), mat(0x5d6d8a)), 0.15, h + 0.1, -0.1); }
+  else if (kind === 'lamp') { put(g, mesh(G_CYL(0.03, 0.04, 0.9, 5), mat(0x3a4660)), 0, 0.45); put(g, mesh(G_SPH(0.09), mat(0xfff27a, { emissive: 0xffe14a, emissiveIntensity: 1.6 })), 0, 0.92); }
+  else if (kind === 'car') { const col = pick([0xff5c8a, 0x3fa7ff, 0xffd23f, 0x43c463]); put(g, mesh(G_BOX(0.7, 0.18, 0.36), mat(col, { roughness: 0.4 })), 0, 0.17); put(g, mesh(G_BOX(0.38, 0.16, 0.32), mat(0xcfe8ff, { roughness: 0.2 })), -0.05, 0.33); for (const x of [-0.22, 0.22]) for (const z of [-0.18, 0.18]) put(g, mesh(G_CYL(0.08, 0.08, 0.06, 8), BLACK()), x, 0.08, z).rotation.x = Math.PI / 2; }
+  else if (kind === 'crystal') { put(g, mesh(geo('oct2', () => new THREE.OctahedronGeometry(0.25, 0)), mat(0xb388ff, { emissive: 0x7b2cff, emissiveIntensity: 0.8 })), 0, 0.35, 0, 0.8, 1.6, 0.8); put(g, mesh(geo('oct2', () => new THREE.OctahedronGeometry(0.25, 0)), mat(0xff8fb8, { emissive: 0xff2d6a, emissiveIntensity: 0.6 })), 0.2, 0.2, 0.1, 0.5, 1, 0.5); }
+  else if (kind === 'obelisk') { put(g, mesh(G_CONE(0.2, 1.2, 4), mat(0x2d2350)), 0, 0.6); put(g, mesh(geo('oct3', () => new THREE.OctahedronGeometry(0.1, 0)), mat(0xd6c2ff, { emissive: 0x9b6bff, emissiveIntensity: 1.5 })), 0, 1.3); }
   else if (kind === 'flower') { for (let i = 0; i < 5; i++) put(g, mesh(G_SPH(0.05, 5, 4), mat([0xff7aa8, 0xffd23f, 0xffffff, 0xb388ff][i % 4])), Math.cos(i * 1.3) * 0.25, 0.06, Math.sin(i * 2.1) * 0.25); }
-  g.rotation.y = r() * Math.PI * 2; const s = 0.85 + r() * 0.35; g.scale.setScalar(s);
+  else if (kind === 'log') { const l = put(g, mesh(G_CYL(0.12, 0.12, 0.7, 7), mat(0x7a4a2a)), 0, 0.12); l.rotation.z = Math.PI / 2; put(g, mesh(G_SPH(0.1, 6, 4), dm), 0.1, 0.22, 0, 1.4, 0.5, 1); put(g, mesh(G_SPH(0.05, 5, 4), mat(0xff4d5e)), -0.2, 0.25, 0.05); }
+  else if (kind === 'deadtree') { const bark = mat(0x5e5248); put(g, mesh(G_CYL(0.05, 0.11, 1.0, 5), bark), 0, 0.5); put(g, mesh(G_CYL(0.025, 0.04, 0.45, 4), bark), 0.14, 0.75, 0).rotation.z = -0.9; put(g, mesh(G_CYL(0.02, 0.035, 0.35, 4), bark), -0.12, 0.88, 0.04).rotation.z = 0.8; put(g, mesh(G_SPH(0.1, 6, 4), mat(0x6f8f6a)), 0.28, 0.95, 0, 1.4, 0.4, 1); }
+  else if (kind === 'lily') { put(g, mesh(G_CYL(0.26, 0.26, 0.02, 9), mat(0x5fae5a)), 0, 0.01); if (r() < 0.5) put(g, mesh(G_SPH(0.06, 6, 4), mat(0xffb3c7, { emissive: 0xff8fb8, emissiveIntensity: 0.3 })), 0.06, 0.06, 0.03); }
+  else if (kind === 'floatrock') { put(g, mesh(geo('dod', () => new THREE.DodecahedronGeometry(0.3, 0)), mat(0x4a3f6b)), 0, 0, 0, 1.4, 0.8, 1.2); put(g, mesh(G_CONE(0.25, 0.6, 5), mat(0x3a2f5a)), 0, -0.4, 0).rotation.x = Math.PI; put(g, mesh(geo('oct2', () => new THREE.OctahedronGeometry(0.25, 0)), mat(0xb388ff, { emissive: 0x7b2cff, emissiveIntensity: 0.9 })), 0.1, 0.32, 0, 0.5, 1, 0.5); }
+  else if (kind === 'fence') { const w = mat(0xfff1dc); put(g, mesh(G_BOX(0.08, 0.42, 0.08), w), 0, 0.21); put(g, mesh(G_CONE(0.06, 0.1, 4), w), 0, 0.47); }
+  g.rotation.y = r() * Math.PI * 2; const s = (opt.scale || 1) * (0.85 + r() * 0.35); g.scale.setScalar(s);
   return g;
 }
-const DECO_SET = [['tree', 'bush', 'flower', 'rock'], ['pine', 'mushroom', 'bush', 'rock'], ['reed', 'tree', 'mushroom', 'rock'], ['house', 'lamp', 'bush', 'house'], ['crystal', 'rock', 'crystal', 'pine']];
+/* Temas visuais de cada mundo: decoração interna, anel externo e estilo das casas/caminho */
+const THEMES = {
+  campina: { deco: ['tree', 'bush', 'flower', 'rock'], tile: 'box', checker: true },
+  bosque:  { deco: ['pine', 'mushroom', 'log', 'rock'], tile: 'moss' },
+  pantano: { deco: ['reed', 'deadtree', 'mushroom', 'reed'], tile: 'island' },
+  cidade:  { deco: ['house', 'lamp', 'car', 'bush'], tile: 'slab' },
+  abismo:  { deco: ['crystal', 'rock', 'obelisk', 'crystal'], tile: 'void' }
+};
 
 /* ---- Partículas e efeitos ---- */
 const particles = [];
@@ -755,56 +797,140 @@ function posAt(path, d, out = _pp) {
 }
 
 /* Monta a cena 3D de um mundo. Usado no jogo e no diorama do menu. */
+function heroLabel(text, bg) {
+  const c = document.createElement('canvas'); c.width = 256; c.height = 76; const x = c.getContext('2d');
+  x.fillStyle = bg; x.strokeStyle = '#ffffff'; x.lineWidth = 6;
+  x.beginPath(); if (x.roundRect) x.roundRect(4, 4, 248, 68, 30); else x.rect(4, 4, 248, 68); x.fill(); x.stroke();
+  x.fillStyle = '#fff'; x.font = 'bold 40px "Baloo 2", "Trebuchet MS", sans-serif'; x.textAlign = 'center'; x.textBaseline = 'middle'; x.fillText(text, 128, 42);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace;
+  const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: t, depthTest: false, transparent: true })); s.scale.set(1.15, 0.34, 1); s.renderOrder = 9; return s;
+}
+const HERO_BG = { dash: '#c4692e', bolt: '#d99a3d', pino: '#3d2a1e', luna: '#6f7fe8' };
 function buildWorld(world, seed) {
   root.clear(); fxRoot.clear(); particles.length = 0; rings.length = 0; beams.length = 0;
-  const r = mulberry32(seed || world.id * 977);
+  const r = mulberry32(seed || (world.id + 1) * 977); const prevRng = rng; rng = r;
+  const theme = world.theme || 'campina', TH = THEMES[theme], anim = [];
   const pal = world.palette; scene.background = new THREE.Color(pal.sky); scene.fog.color.set(pal.fog);
   const grid = new Uint8Array(GW * GH); const paths = buildPaths(world.paths);
   for (const p of world.paths) for (let i = 0; i < p.length - 1; i++) {
     const [c0, r0] = p[i], [c1, r1] = p[i + 1]; const n = Math.max(Math.abs(c1 - c0), Math.abs(r1 - r0));
     for (let k = 0; k <= n; k++) { const c = Math.round(lerp(c0, c1, k / n)), rr = Math.round(lerp(r0, r1, k / n)); grid[rr * GW + c] = 1; }
   }
-  // chão base
-  const ground = mesh(G_BOX(30, 0.4, 22), mat(new THREE.Color(pal.ground).offsetHSL(0, -0.05, -0.08).getHex()), false); ground.position.y = -0.2; root.add(ground);
-  // casas (instanciadas)
+  const startP = paths[0].pts[0], endP = paths[0].pts.at(-1);
+  const clearOf = (x, z, m = 0) => Math.hypot(x - startP.x, z - startP.y) > 2.4 + m && Math.hypot(x - endP.x - 0.8, z - endP.y) > 3.6 + m;
+  const inGrid = (x, z, m = 0.6) => Math.abs(x) < GW / 2 + m && Math.abs(z) < GH / 2 + m;
+  // ---------- base do cenário ----------
+  if (theme === 'pantano') {
+    const water = mat(0x3f8f8a, { roughness: 0.12, metalness: 0.25, flatShading: false, transparent: true, opacity: 0.92 });
+    const wm = mesh(G_BOX(44, 0.3, 32), water, false); wm.position.y = -0.33; root.add(wm);
+    put(root, mesh(G_BOX(18.8, 0.3, 11.8), mat(0x5b4a35), false), 0, -0.2, 0);
+    anim.push(t => { water.color.setHSL(0.48, 0.38, 0.38 + Math.sin(t * 1.3) * 0.025); });
+  } else if (theme === 'abismo') {
+    put(root, mesh(G_BOX(19, 0.9, 12), mat(0x2d2350), false), 0, -0.57, 0);
+    for (let i = 0; i < 40; i++) { const x = (r() - 0.5) * 18, z = (r() - 0.5) * 11; const c = put(root, mesh(G_CONE(0.4 + r() * 0.6, 1 + r() * 2.5, 5), mat(0x3a2f5a), false), x, -1.2 - r() * 0.8, z); c.rotation.x = Math.PI; }
+    const sg = new THREE.BufferGeometry(); const sp = new Float32Array(900 * 3);
+    for (let i = 0; i < 900; i++) { const a = r() * Math.PI * 2, b = r() * Math.PI - Math.PI / 2, R = 60 + r() * 20; sp.set([Math.cos(a) * Math.cos(b) * R, Math.sin(b) * R, Math.sin(a) * Math.cos(b) * R], i * 3); }
+    sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
+    const stars = new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xe8dcff, size: 0.35, fog: false })); root.add(stars);
+    anim.push(t => { stars.rotation.y = t * 0.01; });
+  } else {
+    const gcol = theme === 'cidade' ? 0x4a536b : new THREE.Color(pal.ground).offsetHSL(0, -0.05, theme === 'bosque' ? -0.14 : -0.08).getHex();
+    const ground = mesh(G_BOX(44, 0.4, 32), mat(gcol), false); ground.position.y = -0.2; root.add(ground);
+  }
+  // ---------- casas do tabuleiro ----------
   const free = [], pathCells = [];
   for (let rr = 0; rr < GH; rr++) for (let c = 0; c < GW; c++) (grid[rr * GW + c] === 1 ? pathCells : free).push([c, rr]);
-  const tg = G_BOX(0.96, 0.24, 0.96);
-  const inst = new THREE.InstancedMesh(tg, new THREE.MeshStandardMaterial({ roughness: 0.9, flatShading: true }), free.length); inst.receiveShadow = true;
-  const m4 = new THREE.Matrix4(), col = new THREE.Color();
-  free.forEach(([c, rr], i) => { m4.makeTranslation(tileX(c), 0.0, tileZ(rr)); inst.setMatrixAt(i, m4); col.set((c + rr) % 2 ? pal.ground : pal.ground2).offsetHSL(0, 0, (r() - 0.5) * 0.03); inst.setColorAt(i, col); });
+  const tileGeo = { box: G_BOX(0.96, 0.24, 0.96), moss: G_BOX(1, 0.24, 1), island: G_CYL(0.52, 0.58, 0.26, 7), slab: G_BOX(0.9, 0.24, 0.9), void: G_BOX(0.94, 0.26, 0.94) }[TH.tile];
+  const inst = new THREE.InstancedMesh(tileGeo, new THREE.MeshStandardMaterial({ roughness: 0.9, flatShading: true }), free.length); inst.receiveShadow = true;
+  const m4 = new THREE.Matrix4(), col = new THREE.Color(), q4 = new THREE.Quaternion(), s4 = new THREE.Vector3(1, 1, 1), v4 = new THREE.Vector3();
+  free.forEach(([c, rr], i) => {
+    const y = TH.tile === 'island' ? (r() - 0.6) * 0.1 : TH.tile === 'moss' ? r() * 0.04 : 0;
+    q4.setFromAxisAngle(v4.set(0, 1, 0), TH.tile === 'island' ? r() * 6 : 0); m4.compose(v4.set(tileX(c), y, tileZ(rr)), q4, s4); inst.setMatrixAt(i, m4);
+    if (TH.checker) col.set((c + rr) % 2 ? pal.ground : pal.ground2).offsetHSL(0, 0, (r() - 0.5) * 0.03);
+    else if (TH.tile === 'slab') col.set((c + rr) % 2 ? 0xb9bfcc : 0xaeb5c4).offsetHSL(0, 0, (r() - 0.5) * 0.03);
+    else col.set(pal.ground).offsetHSL((r() - 0.5) * 0.03, 0, (TH.tile === 'void' ? 0.1 : 0) + (r() - 0.5) * (TH.tile === 'void' ? 0.06 : 0.08));
+    inst.setColorAt(i, col);
+  });
   root.add(inst);
-  const pinst = new THREE.InstancedMesh(G_BOX(1, 0.16, 1), new THREE.MeshStandardMaterial({ roughness: 1, flatShading: true }), pathCells.length); pinst.receiveShadow = true;
-  pathCells.forEach(([c, rr], i) => { m4.makeTranslation(tileX(c), -0.04, tileZ(rr)); pinst.setMatrixAt(i, m4); col.set(pal.path).offsetHSL(0, 0, (r() - 0.5) * 0.04); pinst.setColorAt(i, col); });
+  const pathMat = new THREE.MeshStandardMaterial({ roughness: 1, flatShading: true });
+  if (theme === 'abismo') { pathMat.emissive = new THREE.Color(0x5b2cff); pathMat.emissiveIntensity = 0.45; anim.push(t => { pathMat.emissiveIntensity = 0.35 + Math.sin(t * 2) * 0.15; }); }
+  const pinst = new THREE.InstancedMesh(theme === 'pantano' ? G_BOX(1, 0.12, 0.98) : G_BOX(1, 0.16, 1), pathMat, pathCells.length); pinst.receiveShadow = true;
+  pathCells.forEach(([c, rr], i) => {
+    m4.makeTranslation(tileX(c), theme === 'pantano' ? 0.02 : -0.04, tileZ(rr)); pinst.setMatrixAt(i, m4);
+    if (theme === 'cidade') col.set(0x3b3f4a).offsetHSL(0, 0, (r() - 0.5) * 0.02); else if (theme === 'pantano') col.set((c + rr) % 2 ? 0xa57d55 : 0x8f6a45); else col.set(pal.path).offsetHSL(0, 0, (r() - 0.5) * 0.04);
+    pinst.setColorAt(i, col);
+  });
   root.add(pinst);
-  // trilha perigosa sinalizada com pedrinhas vermelhas
-  // decoração: bloqueia ~11% das casas livres + borda
-  const decoSet = DECO_SET[(world.id - 1) % DECO_SET.length];
-  const startEnd = new Set(); for (const p of world.paths) { startEnd.add(p[0].join()); startEnd.add(p[p.length - 1].join()); }
-  for (const [c, rr] of free) {
-    let nearPath = false; for (let dc = -1; dc <= 1; dc++) for (let dr = -1; dr <= 1; dr++) if (grid[(rr + dr) * GW + (c + dc)] === 1 && rr + dr >= 0 && rr + dr < GH && c + dc >= 0 && c + dc < GW) nearPath = true;
-    if (r() < (nearPath ? 0.05 : 0.16)) { grid[rr * GW + c] = 2; const d = buildDeco(decoSet[Math.floor(r() * decoSet.length)], pal, r); d.position.set(tileX(c), 0.12, tileZ(rr)); root.add(d); }
+  // detalhes do caminho: faixas (cidade), pedrinhas (bosque/campina), postes do deque (pântano)
+  const detail = [];
+  for (const p of world.paths) for (let i = 0; i < p.length - 1; i++) {
+    const a = new THREE.Vector2(tileX(p[i][0]), tileZ(p[i][1])), b = new THREE.Vector2(tileX(p[i + 1][0]), tileZ(p[i + 1][1])); const L = a.distanceTo(b);
+    for (let d = 0.25; d < L; d += theme === 'cidade' ? 0.6 : 0.8) { const t = d / L; detail.push([lerp(a.x, b.x, t), lerp(a.y, b.y, t), Math.abs(b.x - a.x) > 0.01]); }
   }
-  for (let i = 0; i < 70; i++) { const x = (r() - 0.5) * 29, z = (r() - 0.5) * 21; if (Math.abs(x) < 9.6 && Math.abs(z) < 5.8) continue; if (x > 9 && Math.abs(z - paths[0].pts.at(-1).y) < 2.2) continue; const d = buildDeco(decoSet[Math.floor(r() * decoSet.length)], pal, r); d.position.set(x, 0, z); root.add(d); }
-  // portal e santuário
-  const portal = buildPortal(); const p0 = paths[0].pts[0], p1 = paths[0].pts[1];
-  portal.group.position.set(p0.x, 0, p0.y); portal.group.rotation.y = Math.atan2(p1.x - p0.x, p1.y - p0.y); root.add(portal.group);
-  const sanc = buildSanctuary(); const e = paths[0].pts.at(-1), e2 = paths[0].pts.at(-2); const de = e.clone().sub(e2).normalize();
-  sanc.group.position.set(e.x + de.x * 0.6, 0, e.y + de.y * 0.6); root.add(sanc.group);
-  // marcadores de túnel
+  if (theme === 'cidade') { const di = new THREE.InstancedMesh(G_BOX(0.3, 0.02, 0.07), mat(0xffd23f, { emissive: 0xffb800, emissiveIntensity: 0.4 }), detail.length); detail.forEach(([x, z, hor], i) => { q4.setFromAxisAngle(v4.set(0, 1, 0), hor ? 0 : Math.PI / 2); m4.compose(v4.set(x, 0.05, z), q4, s4); di.setMatrixAt(i, m4); }); root.add(di); }
+  else if (theme === 'bosque' || theme === 'campina') { const di = new THREE.InstancedMesh(G_SPH(0.06, 5, 3), mat(theme === 'bosque' ? 0x8a8070 : 0xd9b98a), detail.length); detail.forEach(([x, z], i) => { m4.makeTranslation(x + (r() - 0.5) * 0.7, 0.04, z + (r() - 0.5) * 0.7); di.setMatrixAt(i, m4); }); root.add(di); }
+  else if (theme === 'pantano') { const di = new THREE.InstancedMesh(G_CYL(0.05, 0.05, 0.5, 5), mat(0x5e4630), detail.length * 2); let k = 0; detail.forEach(([x, z, hor]) => { for (const s of [-1, 1]) { m4.makeTranslation(x + (hor ? 0 : s * 0.5), -0.05, z + (hor ? s * 0.5 : 0)); di.setMatrixAt(k++, m4); } }); root.add(di); }
+  // ---------- decoração dentro do tabuleiro (bloqueia casas) ----------
+  for (const [c, rr] of free) {
+    let nearPath = false; for (let dc = -1; dc <= 1; dc++) for (let dr = -1; dr <= 1; dr++) { const a = rr + dr, b = c + dc; if (a >= 0 && a < GH && b >= 0 && b < GW && grid[a * GW + b] === 1) nearPath = true; }
+    if (r() < (nearPath ? 0.05 : 0.15)) { grid[rr * GW + c] = 2; const d = buildDeco(TH.deco[Math.floor(r() * TH.deco.length)], pal, r, { scale: theme === 'cidade' ? 0.8 : 1 }); d.position.set(tileX(c), 0.12, tileZ(rr)); root.add(d); }
+  }
+  // ---------- anel externo: o que mais diferencia os mundos ----------
+  const scatter = (n, kinds, opt = {}) => { for (let i = 0; i < n; i++) { const x = (r() - 0.5) * (opt.w || 30), z = (r() - 0.5) * (opt.h || 22); if (inGrid(x, z, opt.m ?? 0.6) || !clearOf(x, z)) continue; const d = buildDeco(pick(kinds), pal, r, opt); d.position.set(x, opt.y ?? 0, z); root.add(d); if (opt.each) opt.each(d, i); } };
+  if (theme === 'campina') {
+    scatter(60, ['tree', 'tree', 'bush', 'flower', 'flower']);
+    for (let x = -9.3; x <= 9.3; x += 0.62) for (const z of [-5.85, 5.85]) if (clearOf(x, z, -1)) { const f = buildDeco('fence', pal, r); f.position.set(x, 0, z); f.rotation.y = 0; root.add(f); }
+    const pond = mesh(geo('pond', () => new THREE.CircleGeometry(1.6, 16)), mat(0x6fc3e8, { roughness: 0.1, metalness: 0.2 }), false); pond.rotation.x = -Math.PI / 2; pond.position.set(-11.5, 0.02, -7.5); root.add(pond);
+    for (let i = 0; i < 6; i++) { const cl = new THREE.Group(); for (let k = 0; k < 3; k++) put(cl, mesh(G_SPH(0.6 + k * 0.15, 7, 5), mat(0xffffff, { transparent: true, opacity: 0.9 }), false), k * 0.7, Math.sin(k) * 0.2, 0); cl.position.set((r() - 0.5) * 34, 7 + r() * 3, -8 - r() * 8); root.add(cl); const sp = 0.2 + r() * 0.3; anim.push(t => { cl.position.x = ((cl.position.x + 17 + sp * 0.016) % 34) - 17; }); }
+  } else if (theme === 'bosque') {
+    scatter(260, ['pine', 'pine', 'pine', 'log', 'mushroom'], { scale: 1.4 });
+    const fg = new THREE.BufferGeometry(); const fp = new Float32Array(80 * 3); const seeds = [];
+    for (let i = 0; i < 80; i++) { seeds.push([(r() - 0.5) * 22, 0.3 + r() * 1.5, (r() - 0.5) * 14, r() * 6]); }
+    fg.setAttribute('position', new THREE.BufferAttribute(fp, 3));
+    const flies = new THREE.Points(fg, new THREE.PointsMaterial({ color: 0xe8ff7a, size: 0.12, transparent: true, opacity: 0.9 })); root.add(flies);
+    anim.push(t => { seeds.forEach(([x, y, z, o], i) => fp.set([x + Math.sin(t * 0.5 + o) * 0.6, y + Math.sin(t * 1.3 + o) * 0.2, z + Math.cos(t * 0.4 + o) * 0.6], i * 3)); fg.attributes.position.needsUpdate = true; });
+  } else if (theme === 'pantano') {
+    scatter(45, ['deadtree', 'reed', 'reed'], { m: 1.0 });
+    scatter(90, ['lily'], { y: -0.17, m: 0.8, w: 40, h: 30, each: (d, i) => { const y0 = d.position.y; anim.push(t => { d.position.y = y0 + Math.sin(t * 1.5 + i) * 0.02; d.rotation.y += 0.001; }); } });
+  } else if (theme === 'cidade') {
+    for (let x = -15; x <= 15; x += 1.15) for (const side of [-1, 1]) { const z = side * (6.9 + r() * 1.2); if (!clearOf(x, z)) continue; const tall = side < 0; const h = tall ? 1.2 + r() * 2.6 : 0.5 + r() * 0.5; const d = buildDeco('house', pal, r, { h }); d.rotation.y = side < 0 ? 0 : Math.PI; d.position.set(x, 0, z); d.scale.setScalar(1.15); root.add(d); }
+    for (let z = -5.5; z <= 5.5; z += 1.15) for (const side of [-1, 1]) { const x = side * (10.4 + r() * 1.4); if (!clearOf(x, z)) continue; const h = side < 0 ? 1.2 + r() * 2.4 : 0.5 + r() * 0.4; const d = buildDeco('house', pal, r, { h }); d.rotation.y = side < 0 ? Math.PI / 2 : -Math.PI / 2; d.position.set(x, 0, z); d.scale.setScalar(1.15); root.add(d); }
+    for (let x = -9; x <= 9; x += 2.2) for (const z of [-5.9, 5.9]) if (clearOf(x, z, -1)) { const l = buildDeco('lamp', pal, r); l.position.set(x, 0, z); root.add(l); }
+    scatter(10, ['car'], { m: 0.8 });
+  } else if (theme === 'abismo') {
+    for (let i = 0; i < 26; i++) { const a = r() * Math.PI * 2, R = 12 + r() * 6; const x = Math.cos(a) * R, z = Math.sin(a) * R * 0.75; if (!clearOf(x, z)) continue; const d = buildDeco('floatrock', pal, r, { scale: 1 + r() * 1.5 }); const y0 = -1 + r() * 3; d.position.set(x, y0, z); root.add(d); const ph = r() * 6; anim.push(t => { d.position.y = y0 + Math.sin(t * 0.8 + ph) * 0.25; d.rotation.y += 0.002; }); }
+    scatter(8, ['obelisk', 'crystal'], { w: 21, h: 13.5, m: 0.4 });
+  }
+  // ---------- portal e santuário ----------
+  const portal = buildPortal(); const p1 = paths[0].pts[1];
+  portal.group.position.set(startP.x, 0, startP.y); portal.group.rotation.y = Math.atan2(p1.x - startP.x, p1.y - startP.y); root.add(portal.group);
+  const sanc = buildSanctuary(); const e2 = paths[0].pts.at(-2); const de = endP.clone().sub(e2).normalize();
+  sanc.group.position.set(endP.x + de.x * 0.6, 0, endP.y + de.y * 0.6); root.add(sanc.group);
   const tunnels = (world.tunnels || []).map(([pi, d]) => { const pth = paths[Math.min(pi, paths.length - 1)]; const q = posAt(pth, d + 1.2, {}); const m = put(root, mesh(G_CYL(0.32, 0.36, 0.06, 10), mat(0x2b1d14), false), q.x, 0.06, q.z); put(root, mesh(geo('mound', () => new THREE.SphereGeometry(0.4, 8, 4, 0, 6.3, 0, 1.2)), mat(0x8d6e63)), q.x, -0.12, q.z, 1, 0.5, 1); return { p: pi, d: d + 1.2, x: q.x, z: q.z, m }; });
-  // placas no caminho perigoso
   paths.forEach((p, i) => { if (i !== world.risky) return; const q = posAt(p, p.len * 0.45, {}); const s = emojiSprite('⚠️', 0.5); s.position.set(q.x, 0.8, q.z); s.material.depthTest = true; root.add(s); });
-  // heróis ao redor do santuário
-  const heroes = {}; const sp = sanc.group.position; const fwd = Math.atan2(-de.y, -de.x);
-  D.heroes.forEach((h, i) => { const hm = buildHero(h.id); const off = [-1.9, -1.15, 1.15, 1.9][i]; const back = Math.abs(off) > 1.5 ? 0.35 : -0.2; hm.group.position.set(sp.x - de.y * off - de.x * back, 0, sp.z + de.x * off - de.y * back); hm.group.rotation.y = Math.atan2(de.y, -de.x); hm.home = hm.group.position.clone(); hm.group.scale.setScalar(1.25); root.add(hm.group); heroes[h.id] = hm; });
+  // ---------- heróis: maiores, em pedestais coloridos e com nome ----------
+  const heroes = {}; const sp = sanc.group.position;
+  D.heroes.forEach((h, i) => {
+    const off = [-2.7, -1.5, 1.5, 2.7][i]; const back = Math.abs(off) > 2 ? 0.25 : -0.35;
+    const x = sp.x - de.y * off - de.x * back, z = sp.z + de.x * off - de.y * back;
+    const ped = new THREE.Group(); ped.position.set(x, 0, z); root.add(ped);
+    put(ped, mesh(G_CYL(0.55, 0.62, 0.22, 10), mat(0xfff1dc)), 0, 0.11);
+    const ring = put(ped, mesh(geo('heroRing', () => new THREE.TorusGeometry(0.52, 0.05, 6, 24)), mat(new THREE.Color(HERO_BG[h.id]).getHex(), { emissive: new THREE.Color(HERO_BG[h.id]).getHex(), emissiveIntensity: 0.8 }), false), 0, 0.23); ring.rotation.x = Math.PI / 2;
+    const hm = buildHero(h.id); hm.group.position.set(x, 0.22, z); hm.group.rotation.y = Math.atan2(de.y, -de.x); hm.home = hm.group.position.clone(); hm.group.scale.setScalar(2.2); root.add(hm.group);
+    const label = heroLabel(`${h.icon} ${h.name}`, HERO_BG[h.id]); label.position.set(x, 1.95, z); label.scale.set(1.45, 0.43, 1); root.add(label);
+    hm.label = label; hm.ring = ring; heroes[h.id] = hm;
+  });
   // marcador de seleção e anel de alcance
   const sel = mesh(G_BOX(1, 0.05, 1), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.45, depthWrite: false }), false); sel.visible = false; root.add(sel);
   const range = new THREE.Mesh(geo('rangeRing', () => new THREE.RingGeometry(0.96, 1, 48)), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.85, side: THREE.DoubleSide, depthWrite: false }));
   range.rotation.x = -Math.PI / 2; range.position.y = 0.16; range.visible = false; root.add(range);
   const rangeFill = new THREE.Mesh(geo('rangeFill', () => new THREE.CircleGeometry(1, 48)), new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.12, depthWrite: false })); rangeFill.rotation.x = -Math.PI / 2; rangeFill.position.y = 0.15; rangeFill.visible = false; root.add(rangeFill);
+  const tutMark = new THREE.Group(); tutMark.visible = false; root.add(tutMark);
+  put(tutMark, mesh(G_BOX(1, 0.08, 1), new THREE.MeshBasicMaterial({ color: 0xffd23f, transparent: true, opacity: 0.6, depthWrite: false }), false), 0, 0.16);
+  const arrow = put(tutMark, mesh(G_CONE(0.22, 0.45, 4), mat(0xffd23f, { emissive: 0xffb800, emissiveIntensity: 0.9 }), false), 0, 1.1); arrow.rotation.x = Math.PI;
   const synLines = new THREE.Group(); root.add(synLines);
-  world3d = { grid, paths, portal, sanc, heroes, sel, range, rangeFill, synLines, tunnels, pal };
+  rng = prevRng;
+  world3d = { grid, paths, portal, sanc, heroes, sel, range, rangeFill, synLines, tunnels, pal, anim, theme, tutMark };
   setWeatherVisual(world.weather[0]);
   return world3d;
 }
@@ -852,9 +978,9 @@ function challengeConfig(weekly) {
 
 /* ---------- Início da fase ---------- */
 function startLevel(cfg) {
-  closeScreen(); closeSheet(); cam.menu = false; cam.zoom = 1; cam.target.set(0.4, 0, 0.5); cam.pitch = 0.98; cam.yaw = cam.baseYaw;
+  closeScreen(); closeSheet(); cam.menu = false; cam.zoom = 1; cam.target.set(0.9, 0, 0.5); cam.pitch = 0.98; cam.yaw = cam.baseYaw;
   rng = mulberry32(cfg.seed);
-  buildWorld(cfg.world, cfg.world.id * 977);
+  buildWorld(cfg.world, (cfg.world.id + 1) * 977);
   const startItems = P.relics.includes('mochila');
   G = {
     cfg, w3: world3d, grid: world3d.grid.slice(), paths: world3d.paths, towerAt: new Array(GW * GH).fill(null), towers: [], enemies: [], projectiles: [], traps: [], barriers: [], chests: [], puddles: [],
@@ -866,11 +992,13 @@ function startLevel(cfg) {
     T: { revealAll: 0, mark: 0, shield: 0, lunar: 0, rastro: 0, weatherClear: 0, rangeDebuff: 0, upgradeBlock: 0, panic: 0, bossVuln: 0, swap: 0, lightning: 4 },
     weather: cfg.weatherSeq[0], stats: { kills: 0, leaks: 0, correct: 0, asked: 0, built: 0, upgrades: 0, startTime: performance.now() },
     waveLeaks: 0, items: { kit: startItems ? 1 : 0, racao: 0, apito: startItems ? 1 : 0 }, newCards: [], boss: null, evDone: {}, choiceIdx: 0, secretFound: false,
-    dda: P.settings.difficulty === 'adaptive' ? P.dda : P.settings.difficulty === 'relaxed' ? 0.8 : 1.25, forcedPath: -1, pendingEco: false, tutorial: cfg.mode === 'campaign' && cfg.world.id === 1 && !P.tutorialDone ? 1 : 0
+    dda: P.settings.difficulty === 'adaptive' ? P.dda : P.settings.difficulty === 'relaxed' ? 0.8 : 1.25, forcedPath: -1, pendingEco: false, tutorial: cfg.mode === 'campaign' && cfg.world.id === 1 && !P.tutorialDone && !P.tutorialSeen ? 1 : 0
   };
   window.__reino.G = G;
   $('#hud').hidden = false; renderHeroBar(); renderItemBar(); updateHUD(true); setWeatherVisual(G.weather);
   Sfx.music([262, 294, 247, 220, 196][cfg.world.id - 1]);
+  renderTut();
+  if (cfg.mode === 'tutorial') { G.tut = { i: -1 }; G.dda = 1; tutNext(); return; }
   const w = cfg.world, wd = D.weather[G.weather];
   const modsTxt = cfg.mods.length ? `<div class="weak">🎲 Regras do dia: ${cfg.mods.map(id => { const m = D.modifiers.find(x => x.id === id); return `<b>${m.name}</b> — ${m.desc}`; }).join('<br>')}</div>` : '';
   G.modalOpen = true;
@@ -904,6 +1032,7 @@ function wavePreview(n) {
 async function callWave() {
   if (!G || G.state !== 'build' || G.modalOpen || G.over) return;
   const n = G.wave + 1; if (n > G.totalWaves) return;
+  if (G.tut) { const st = G.tut.cur; if (!st || st.wave !== n) { toast('👉 Siga o passo do tutorial primeiro'); return; } }
   if (G.countdown > 0 && G.wave > 0) { const bonus = Math.floor(G.countdown) * 2; if (bonus > 0) { addCoins(bonus); toast(`Chamada antecipada: +${bonus} 🪙`, 'gold'); } }
   G.countdown = -1;
   const ev = G.cfg.events[n];
@@ -946,7 +1075,7 @@ function waveCleared() {
   for (const e of G.enemies) if (e.illusion) removeEnemy(e);
   toast(`Onda ${G.wave} concluída! +${bonus + income} 🪙`, 'gold');
   if (G.wave >= G.totalWaves) { victory(); return; }
-  G.countdown = 18; say(pick(['dash', 'bolt', 'pino', 'luna']), pick(LINES.clear), 3);
+  G.countdown = G.tut ? -1 : 18; if (!G.tut) say(pick(['dash', 'bolt', 'pino', 'luna']), pick(LINES.clear), 3);
   updateHUD(true);
 }
 
@@ -1393,6 +1522,7 @@ async function openChest(ch) {
   const item = pick(Object.keys(D.consumables)); G.items[item] = Math.min(3, G.items[item] + (correct || ch.secret ? 1 : 0) + (ch.secret ? 1 : 0));
   if (correct || ch.secret) toast(`${D.consumables[item].icon} Você ganhou: ${D.consumables[item].name}!`, 'gold');
   if (ch.secret) { const locked = D.cards.filter(c => !P.cards.includes(c.id)); if (locked.length) unlockCard(pick(locked).id); }
+  if (G.tut && G.tut.cur && G.tut.cur.markChest) { G.tutChest = true; G.items[item] = Math.max(1, G.items[item]); }
   renderItemBar();
 }
 
@@ -1414,6 +1544,7 @@ function update(dt) {
   if (G.tutorial === 3 && G.enemies.some(e => e.hidden && e.alive)) { G.tutorial = 4; say('dash', 'Vermes escondidos saindo dos túneis! Use minha <b>Visão de Túnel</b> (botão Dash ou tecla 1).', 7); document.querySelector('.hero-btn[data-hero=dash]')?.classList.add('pulse'); }
   if (G.tutorial === 4 && G.T.revealAll > 0) { G.tutorial = 5; document.querySelector('.hero-btn[data-hero=dash]')?.classList.remove('pulse'); }
   if (G.tutorial === 5 && G.wave >= 2 && G.state === 'build') { G.tutorial = 6; say('luna', 'Toque numa torre para <b>melhorá-la</b>. Torres vizinhas certas formam <b>sinergias</b> 🔗 — ex.: Fonte da Vida + Escova.', 7); }
+  if (G.tut) tutTick();
   if (G.pendingEco && !G.modalOpen) { G.pendingEco = false; ecoChallenge(); }
 }
 async function ecoChallenge() {
@@ -1468,7 +1599,42 @@ function renderItemBar() { if (!G) return; $('#itemBar').innerHTML = Object.entr
 
 /* ---- Painel inferior: construir / torre ---- */
 let sheetSig = '';
-function closeSheet() { $('#sheet').hidden = true; if (G) { G.sel = null; G.selTower = null; G.preview = null; } if (world3d) { world3d.sel.visible = false; world3d.range.visible = world3d.rangeFill.visible = false; } }
+
+/* ---- Guia e recomendações de torres ---- */
+const CAT_COLOR = { 'Ataque': '#e8394b', 'Área': '#e8701f', 'Controle': '#2b8ee8', 'Suporte': '#2a9d4b', 'Economia': '#b38600' };
+const CAT_DESC = { 'Ataque': 'tiro forte em um alvo', 'Área': 'acerta vários de uma vez', 'Controle': 'deixa lento ou prende', 'Suporte': 'ajuda outras torres', 'Economia': 'gera moedas' };
+const catChip = d => `<span class="chip" style="background:${CAT_COLOR[d.cat]}">${d.cat}</span>`;
+const pips = v => `<span class="pips">${[1, 2, 3, 4, 5].map(i => `<i class="${i <= v ? 'on' : ''}"></i>`).join('')}</span>`;
+function towerBars(d) { const [a, b, c] = d.bars; return `<div class="barsg"><span>⚔️ Dano</span>${a ? pips(a) : '<small>— não ataca</small>'}<span>🎯 Alcance</span>${pips(b)}<span>⏱️ Velocidade</span>${c ? pips(c) : '<small>—</small>'}<span>🦟 Voadores</span><small>${d.targets === 'ground' ? '❌ não acerta' : '✅ acerta'}</small></div>`; }
+function nextWaveInfo() {
+  if (!G) return { icons: '', tags: [] }; const n = G.state === 'wave' ? G.wave : G.wave + 1; const s = G.cfg.waves[n - 1]; if (!s) return { icons: '', tags: [] };
+  const defs = parseWave(s).map(g => D.enemies[g.t] || D.bosses[g.t]); const has = t => defs.some(d => (d.tags || []).includes(t));
+  const tags = []; if (has('flying')) tags.push('🦟 voadores'); if (has('hidden')) tags.push('🫥 ocultos'); if (has('armored')) tags.push('🛡️ blindados'); if (has('parasite')) tags.push('🦗 parasitas'); if (defs.some(d => d.hp >= 150)) tags.push('🐘 muita vida');
+  return { icons: wavePreview(n), tags, flying: has('flying'), defs, has };
+}
+function recommendTowers() {
+  const nx = nextWaveInfo(); if (!nx.defs) return {}; const rec = {}; const add = (id, why) => { if (!towerLocked(TOWER[id]) && !(rec[id] || []).includes(why)) (rec[id] = rec[id] || []).push(why); };
+  if (nx.has('flying')) { add('antipulgas', 'voadores'); add('agua', 'voadores'); add('farol', 'voadores'); }
+  if (nx.has('hidden')) { add('vet', 'ocultos'); add('farol', 'ocultos'); }
+  if (nx.has('parasite')) add('antipulgas', 'parasitas');
+  if (nx.has('armored')) { add('osso', 'blindados'); add('farol', 'blindados'); add('vacina', 'blindados'); }
+  if (nx.has('swarm')) { add('tigela', 'grupos'); add('escova', 'grupos'); }
+  if (nx.defs.some(d => d.hp >= 150)) { add('escova', 'muita vida'); add('farol', 'muita vida'); }
+  if (nx.defs.some(d => d.speed >= 1.4)) add('agua', 'rápidos');
+  for (const d of nx.defs) if (d.weakTo) add(d.weakTo, d.name);
+  if (nx.defs.some(d => d.towerDps || d.poison || d.rateAura)) add('vet', 'torres desanimadas');
+  return rec;
+}
+function towerGuide() {
+  const wasOpen = G && G.modalOpen; if (G) G.modalOpen = true;
+  const cats = Object.keys(CAT_COLOR);
+  return showModal(`<h2 id="mTitle">📖 Guia de Torres</h2>
+   <p style="font-size:.9rem">${cats.map(c => `<span class="chip" style="background:${CAT_COLOR[c]}">${c}</span> ${CAT_DESC[c]}`).join(' · ')}</p>
+   <div class="weak">🧭 <b>Receita simples:</b> 1) <b>Controle</b> no começo do caminho (deixa lento) · 2) <b>Área</b> nas curvas e onde os caminhos se juntam · 3) <b>Ataque</b> perto do Santuário · 4) pelo menos 2 torres com 🦟 para voadores · 5) <b>Suporte</b> no meio do grupo.</div>
+   ${D.towers.map(d => { const lock = G && towerLocked(d); return `<div class="gcard ${lock ? 'locked' : ''}"><div class="row"><span style="font-size:1.8rem">${d.icon}</span><b style="font-family:var(--font-title);font-size:1.05rem">${d.name}</b>${catChip(d)}<span class="spacer"></span><b>🪙${d.cost}</b>${lock ? `<span class="chip">🔒 Mundo ${d.unlockWorld}</span>` : ''}</div>${towerBars(d)}<div class="gw"><div>✅ ${esc(d.good)}</div><div>⛔ ${esc(d.weak)}</div><div>📍 ${esc(d.tip)}</div></div></div>`; }).join('')}
+   <div class="actions"><button class="btn block" data-close="1">Entendi!</button></div>`).then(() => { if (G) G.modalOpen = wasOpen; });
+}
+function closeSheet() { $('#sheet').hidden = true; document.body.classList.remove('sheet-open'); if (G) { G.sel = null; G.selTower = null; G.preview = null; } if (world3d) { world3d.sel.visible = false; world3d.range.visible = world3d.rangeFill.visible = false; } }
 function showRange(x, z, r, color = 0xffffff) { const w = world3d; w.range.visible = w.rangeFill.visible = true; w.range.position.set(x, 0.16, z); w.rangeFill.position.set(x, 0.15, z); w.range.scale.setScalar(r); w.rangeFill.scale.setScalar(r); w.range.material.color.setHex(color); w.rangeFill.material.color.setHex(color); }
 function availableTowers() { if (G.cfg.mode !== 'campaign') return D.towers; const lim = Math.max(G.cfg.world.id, P.worldUnlocked); return D.towers; /* todas aparecem; bloqueadas mostram cadeado */ }
 function towerLocked(def) { if (G.cfg.mode !== 'campaign') return false; return def.unlockWorld > Math.max(G.cfg.world.id, Math.min(P.worldUnlocked, 5)); }
@@ -1489,16 +1655,25 @@ function statLine(s, def, lvl) {
 function renderSheet(force) {
   if (!G) return; const sh = $('#sheet');
   if (G.sel) {
-    const sig = 'b' + G.sel.c + G.sel.r + (G.preview?.id || '') + Math.floor(G.coins / 5) + G.mods.freeTower; if (!force && sig === sheetSig) return; sheetSig = sig;
+    const sig = 'b' + G.sel.c + G.sel.r + (G.preview?.id || '') + Math.floor(G.coins / 5) + G.mods.freeTower + G.wave + G.state + (G.tut ? G.tut.i : ''); if (!force && sig === sheetSig) return; sheetSig = sig;
     const list = availableTowers(); const pv = G.preview;
-    let det = '<div class="tdetail" style="color:var(--ink-2)">Escolha uma torre para ver detalhes. Toque de novo para construir.</div>';
+    const rec = recommendTowers(); const nx = nextWaveInfo();
+    let det = `<div class="tdetail" style="color:var(--ink-2)">👆 Toque numa torre para ver o que ela faz. Toque de novo (ou em <b>Construir</b>) para construir.${Object.keys(rec).length ? ' As marcadas com <b>💡</b> são boas para a próxima onda.' : ''}</div>`;
     if (pv) { const s = towerStats({ def: pv, level: 1 }); const cost = towerCost(pv); const syn = D.synergies.filter(x => x.a === pv.id || x.b === pv.id).map(x => `${x.name} (com ${TOWER[x.a === pv.id ? x.b : x.a].icon})`).join(' · ');
-      det = `<div class="tdetail"><div class="row"><b style="font-family:var(--font-title);font-size:1.05rem">${pv.icon} ${pv.name}</b><span class="chip orange">${esc(pv.role)}</span></div><div class="stats">${statLine(s, pv, 1).map(x => `<span class="stat">${x}</span>`).join('')}</div>
-      <div style="font-size:.82rem"><b>Nível 5:</b> ${esc(pv.lvl5)}</div>${syn ? `<div class="syn">🔗 Sinergias: ${esc(syn)}</div>` : ''}<div class="lesson">📘 ${esc(pv.lesson)}</div>
-      <div class="actions"><button class="btn green" data-act="build" ${G.coins < cost ? 'disabled' : ''}>Construir · 🪙${cost}</button></div></div>`;
+      const airWarn = pv.targets === 'ground' && nx.flying ? `<div class="warn">⚠️ A próxima onda tem <b>voadores</b> e esta torre <b>não acerta</b> quem voa.</div>` : '';
+      det = `<div class="tdetail"><div class="row"><b style="font-family:var(--font-title);font-size:1.1rem">${pv.icon} ${pv.name}</b>${catChip(pv)}</div>
+      ${rec[pv.id] ? `<div class="recbox">💡 Boa para a próxima onda: <b>${esc(rec[pv.id].join(', '))}</b></div>` : ''}${airWarn}
+      ${towerBars(pv)}
+      <div class="gw"><div>✅ <b>Bom contra:</b> ${esc(pv.good)}</div><div>⛔ <b>Limitação:</b> ${esc(pv.weak)}</div><div>📍 <b>Onde colocar:</b> ${esc(pv.tip)}</div></div>
+      <div class="stats">${statLine(s, pv, 1).map(x => `<span class="stat">${x}</span>`).join('')}</div>
+      <div style="font-size:.82rem"><b>🌟 No nível 5:</b> ${esc(pv.lvl5)}</div>${syn ? `<div class="syn">🔗 Sinergias: ${esc(syn)}</div>` : ''}<div class="lesson">📘 ${esc(pv.lesson)}</div>
+      <div class="actions"><button class="btn green ${G.tut && G.tut.cur?.tower === pv.id ? 'tut-hl' : ''}" data-act="build" ${G.coins < cost ? 'disabled' : ''}>Construir · 🪙${cost}</button></div></div>`;
       showRange(tileX(G.sel.c), tileZ(G.sel.r), s.range * (D.weather[G.weather].range), 0x9ad7ff); }
-    sh.innerHTML = `<h3>🏗️ Construir <button class="x" data-act="close" aria-label="Fechar">✕</button></h3><div class="tgrid">${list.map(d => { const lock = towerLocked(d), cost = towerCost(d); return `<button class="tcard ${pv && pv.id === d.id ? 'sel' : ''} ${G.coins < cost ? 'poor' : ''} ${lock ? 'locked' : ''}" data-tower="${d.id}" ${lock ? 'disabled' : ''} aria-label="${d.name}, custa ${cost}${lock ? ', bloqueada' : ''}"><div class="ic">${lock ? '🔒' : d.icon}</div><div class="nm">${d.name}</div><div class="co">${lock ? 'Mundo ' + d.unlockWorld : '🪙' + cost}</div></button>`; }).join('')}</div>${det}`;
-    sh.hidden = false; return;
+    const tutT = G.tut && G.tut.cur?.tower;
+    sh.innerHTML = `<h3>🏗️ Construir <button class="btn ghost small" data-act="guide" style="margin-left:auto">📖 Guia de torres</button><button class="x" data-act="close" aria-label="Fechar" style="margin-left:6px">✕</button></h3>
+     ${nx.icons ? `<div class="nextw">Próxima onda: <b>${nx.icons}</b>${nx.tags.length ? ` · ${nx.tags.join(' · ')}` : ''}</div>` : ''}
+     <div class="tgrid">${list.map(d => { const lock = towerLocked(d), cost = towerCost(d); return `<button class="tcard ${pv && pv.id === d.id ? 'sel' : ''} ${G.coins < cost ? 'poor' : ''} ${lock ? 'locked' : ''} ${tutT === d.id ? 'tut-hl' : ''}" data-tower="${d.id}" ${lock ? 'disabled' : ''} aria-label="${d.name}, ${d.cat}, custa ${cost}${lock ? ', bloqueada' : ''}${rec[d.id] ? ', recomendada' : ''}">${rec[d.id] && !lock ? '<span class="rec" title="Recomendada para a próxima onda">💡</span>' : ''}${d.targets !== 'ground' && !lock ? '<span class="air" title="Acerta voadores">🦟</span>' : ''}<div class="ic">${lock ? '🔒' : d.icon}</div><div class="nm">${d.name}</div><div class="cat" style="color:${CAT_COLOR[d.cat]}">${d.cat}</div><div class="co">${lock ? 'Mundo ' + d.unlockWorld : '🪙' + cost}</div></button>`; }).join('')}</div>${det}`;
+    sh.hidden = false; document.body.classList.add('sheet-open'); return;
   }
   const t = G.selTower; if (!t) { sh.hidden = true; return; }
   const uc = upgradeCost(t); const sig = 't' + G.towers.indexOf(t) + t.level + t.mode + Math.round(t.hp) + t.down + (G.coins >= uc) + G.T.upgradeBlock.toFixed(0) + (t.synList || []).join() + uc;
@@ -1515,13 +1690,14 @@ function renderSheet(force) {
    <div class="actions">${ns ? `<button class="btn green" data-act="up" ${G.coins < uc || G.T.upgradeBlock > 0 ? 'disabled' : ''}>⬆️ Melhorar · 🪙${uc}</button>` : ''}
    ${t.down ? `<button class="btn teal" data-act="restore" ${G.coins < Math.round(d.cost * 0.25) ? 'disabled' : ''}>💪 Restaurar · 🪙${Math.round(d.cost * 0.25)}</button>` : ''}
    <button class="btn ghost" data-act="sell">Vender · +🪙${refund}</button></div><div style="font-size:.75rem;color:var(--ink-2);margin-top:6px">Dano causado: ${Math.round(t.dmgDone)}</div></div>`;
-  showRange(t.x, t.z, s.range, 0xffd23f); sh.hidden = false;
+  showRange(t.x, t.z, s.range, 0xffd23f); sh.hidden = false; document.body.classList.add('sheet-open');
 }
 $('#sheet').addEventListener('click', e => {
   const b = e.target.closest('button'); if (!b || !G) return; Sfx.play('click');
   if (b.dataset.tower) { const d = TOWER[b.dataset.tower]; if (G.preview === d && G.sel) { const c = G.sel; buildTower(c.c, c.r, d); } else { G.preview = d; renderSheet(true); } return; }
   if (b.dataset.mode) { G.selTower.mode = b.dataset.mode; renderSheet(true); return; }
   const a = b.dataset.act;
+  if (a === 'guide') { towerGuide(); return; }
   if (a === 'close') closeSheet(); else if (a === 'build' && G.sel && G.preview) buildTower(G.sel.c, G.sel.r, G.preview);
   else if (a === 'up') upgradeTower(G.selTower); else if (a === 'sell') sellTower(G.selTower);
   else if (a === 'restore') { const t = G.selTower, c = Math.round(t.def.cost * 0.25); if (G.coins >= c) { G.coins -= c; t.hp = t.maxHp; t.down = false; Sfx.play('heal'); renderSheet(true); } }
@@ -1622,13 +1798,13 @@ function bossIntro(key) {
 function pauseMenu() {
   if (!G || G.over || G.modalOpen) return; G.modalOpen = true; G.paused = true;
   showModal(`<h2 id="mTitle">⏸ Pausa</h2><p>${esc(G.cfg.title)} · Onda ${G.wave}/${G.totalWaves}</p>
-   <div class="grid2"><button class="btn green" data-close="resume">▶ Continuar</button><button class="btn teal" data-close="guide">📖 Guia rápido</button><button class="btn ghost" data-close="restart">🔁 Recomeçar</button><button class="btn red" data-close="exit">🏠 Sair para o menu</button></div>
+   <div class="grid2"><button class="btn green" data-close="resume">▶ Continuar</button><button class="btn teal" data-close="guide">📖 Heróis e inimigos</button><button class="btn purple" data-close="towers">🏰 Guia de torres</button><button class="btn ghost" data-close="restart">🔁 Recomeçar</button><button class="btn red" data-close="exit">🏠 Sair para o menu</button></div>
    <div class="set">Música <button class="toggle" role="switch" aria-checked="${P.settings.music}" data-tg="music" aria-label="Música"></button></div>
    <div class="set">Efeitos sonoros <button class="toggle" role="switch" aria-checked="${P.settings.sfx}" data-tg="sfx" aria-label="Efeitos sonoros"></button></div>
    <div class="set">Reduzir movimento <button class="toggle" role="switch" aria-checked="${P.settings.reduceMotion}" data-tg="reduceMotion" aria-label="Reduzir movimento"></button></div>
    <p style="font-size:.8rem;color:var(--ink-2)">Atalhos: 1–4 heróis · Espaço onda · F velocidade · U melhorar · Q/W/E itens · P pausa</p>`, bindToggles).then(v => {
     G.modalOpen = false; G.paused = false;
-    if (v === 'guide') guide(); else if (v === 'restart') startLevel(Object.assign({}, G.cfg, { seed: G.cfg.seed + 1 })); else if (v === 'exit') { exitToMenu(); }
+    if (v === 'guide') guide(); else if (v === 'towers') towerGuide(); else if (v === 'restart') { if (G.cfg.mode === 'tutorial') startTutorial(); else startLevel(Object.assign({}, G.cfg, { seed: G.cfg.seed + 1 })); } else if (v === 'exit') { exitToMenu(); }
   });
 }
 function guide() {
@@ -1649,36 +1825,37 @@ function finish(win) {
   let pat = win ? stars * 10 + G.stats.correct * 3 : Math.max(3, G.stats.correct * 2 + G.wave);
   const firstClear = win && cfg.mode === 'campaign' && !P.stars[cfg.world.id];
   if (firstClear) pat += 20; if (cfg.mode === 'daily') pat = Math.round(pat * 1.5); if (cfg.mode === 'weekly') pat *= 2; if (cfg.mods.includes('fragil')) pat = Math.round(pat * 1.5);
+  if (cfg.mode === 'tutorial') { pat = win ? 30 : 10; if (win) { P.tutorialSeen = true; P.tutorialDone = true; } }
   P.patinhas += pat;
   if (win) {
     grant('firstWin'); if (G.lives >= G.maxLives) grant('perfect');
     if (cfg.mode === 'campaign') { P.stars[cfg.world.id] = Math.max(P.stars[cfg.world.id] || 0, stars); P.worldUnlocked = Math.max(P.worldUnlocked, Math.min(5, cfg.world.id + 1)); if (cfg.world.id === 1) P.tutorialDone = true; if (cfg.world.id === 5) P.campaignDone = true; }
     const locked = shuffle(ALBUM.filter(c => !P.cards.includes(c.id))); for (const c of locked.slice(0, firstClear ? 2 : 1)) unlockCard(c.id);
-    P.board.push({ name: P.settings.name, mode: cfg.mode, label: cfg.title, stars, time, date: Date.now() }); P.board.sort((a, b) => b.stars - a.stars || a.time - b.time); P.board = P.board.slice(0, 30);
-    if (P.settings.difficulty === 'adaptive') P.dda = clamp(stars === 3 ? G.dda + 0.03 : G.dda, 0.8, 1.15);
-  } else if (P.settings.difficulty === 'adaptive') P.dda = clamp(G.dda - 0.1, 0.75, 1.15);
+    if (cfg.mode !== 'tutorial') P.board.push({ name: P.settings.name, mode: cfg.mode, label: cfg.title, stars, time, date: Date.now() }); P.board.sort((a, b) => b.stars - a.stars || a.time - b.time); P.board = P.board.slice(0, 30);
+    if (P.settings.difficulty === 'adaptive' && cfg.mode !== 'tutorial') P.dda = clamp(stars === 3 ? G.dda + 0.03 : G.dda, 0.8, 1.15);
+  } else if (P.settings.difficulty === 'adaptive' && cfg.mode !== 'tutorial') P.dda = clamp(G.dda - 0.1, 0.75, 1.15);
   if (cfg.mode === 'daily') { const today = ymd(new Date()); const y = new Date(); y.setDate(y.getDate() - 1); if (P.daily.lastPlayed !== today) P.daily.streak = P.daily.lastPlayed === ymd(y) ? P.daily.streak + 1 : 1; P.daily.lastPlayed = today; if (win) { P.daily.done = today; grant('daily'); } if (P.daily.streak >= 3) grant('streak3'); }
   if (cfg.mode === 'weekly' && win) P.weekly.done = cfg.key;
   save(); Sfx.play(win ? 'win' : 'lose');
   // dicas: relacionadas aos inimigos da fase + gerais
   const types = [...new Set(cfg.waves.join(',').split(',').map(s => s.trim().split(':')[0]))].filter(k => D.enemies[k]);
   const tips = shuffle(types.map(k => '🩺 ' + D.enemies[k].risk)).slice(0, 1).concat(shuffle(D.tips.slice()).slice(0, 2).map(t => '💡 ' + t));
-  const next = cfg.mode === 'campaign' && win && cfg.world.id < 5;
+  const next = (cfg.mode === 'campaign' && win && cfg.world.id < 5) || (cfg.mode === 'tutorial' && win);
   const newCards = G.newCards.map(id => CARD[id]).filter(Boolean);
   G.modalOpen = true;
-  showModal(`<h2 id="mTitle" style="justify-content:center">${win ? '🏆 Vitória do Reino!' : '💛 O Santuário precisa de você!'}</h2>
+  showModal(`<h2 id="mTitle" style="justify-content:center">${win ? (cfg.mode === 'tutorial' ? '🎓 Tutorial concluído!' : '🏆 Vitória do Reino!') : '💛 O Santuário precisa de você!'}</h2>
    ${win ? `<div class="stars" aria-label="${stars} de 3 estrelas">${[0, 1, 2].map(i => `<span>${i < stars ? '⭐' : '☆'}</span>`).join('')}</div>` : `<p style="text-align:center">Toda defesa é aprendizado. A dificuldade foi ajustada para a próxima tentativa — você consegue!</p>`}
    <div class="grid2"><div class="kv">❤️ Vidas<b>${Math.max(0, G.lives)}/${G.maxLives}</b></div><div class="kv">❓ Perguntas<b>${G.stats.correct}/${G.stats.asked}</b></div><div class="kv">🐾 Patinhas do Saber<b>+${pat}</b></div><div class="kv">⏱️ Tempo<b>${Math.floor(time / 60)}:${String(time % 60).padStart(2, '0')}</b></div></div>
    ${win ? `<p style="font-size:.82rem;text-align:center;color:var(--ink-2)">⭐ vitória · ⭐ vidas ≥ 75% · ⭐ ≥ 60% de acertos nas perguntas</p>` : ''}
    ${newCards.length ? `<b>🃏 Cartões desbloqueados</b><div class="row">${newCards.map(c => `<span class="chip pink">${c.icon} ${esc(c.title)}</span>`).join('')}</div>` : ''}
    <b style="display:block;margin-top:10px">Dicas para a vida real</b>${tips.map(t => `<div class="tip">${esc(t)}</div>`).join('')}
    <p class="disclaimer">🩺 ${esc(D.disclaimer)}</p>
-   <div class="actions">${next ? `<button class="btn green" data-close="next">Próximo mundo ▶</button>` : ''}<button class="btn ${win ? 'ghost' : 'green'}" data-close="retry">🔁 ${win ? 'Jogar de novo' : 'Tentar de novo'}</button><button class="btn ghost" data-close="menu">🏠 Menu</button></div>`).then(v => {
-    if (v === 'next') startLevel(campaignConfig(cfg.world.id + 1)); else if (v === 'retry') startLevel(cfg.mode === 'campaign' ? campaignConfig(cfg.world.id) : challengeConfig(cfg.mode === 'weekly')); else exitToMenu();
+   <div class="actions">${next ? `<button class="btn green" data-close="next">${cfg.mode === 'tutorial' ? 'Começar a Campanha ▶' : 'Próximo mundo ▶'}</button>` : ''}<button class="btn ${win ? 'ghost' : 'green'}" data-close="retry">🔁 ${win ? 'Jogar de novo' : 'Tentar de novo'}</button><button class="btn ghost" data-close="menu">🏠 Menu</button></div>`).then(v => {
+    if (v === 'next') startLevel(campaignConfig(cfg.mode === 'tutorial' ? 1 : cfg.world.id + 1)); else if (v === 'retry') { if (cfg.mode === 'tutorial') startTutorial(); else startLevel(cfg.mode === 'campaign' ? campaignConfig(cfg.world.id) : challengeConfig(cfg.mode === 'weekly')); } else exitToMenu();
   });
 }
 const victory = () => finish(true), defeat = () => finish(false);
-function exitToMenu() { G = null; window.__reino.G = null; $('#hud').hidden = true; $('#bossBar').hidden = true; $('#speech').hidden = true; closeSheet(); showMenu(); }
+function exitToMenu() { G = null; window.__reino.G = null; document.querySelectorAll('.tut-hl').forEach(e => e.classList.remove('tut-hl')); renderTut(); $('#hud').hidden = true; $('#bossBar').hidden = true; $('#speech').hidden = true; closeSheet(); showMenu(); }
 
 /* ---- Laço de renderização ---- */
 let lastT = performance.now(), sheetT = 0;
@@ -1688,6 +1865,9 @@ function animateScene(dt, now) {
   const hurt = w.sanc.crystal.userData.hurt || 0; w.sanc.crystal.material.emissive.setHex(hurt > 0 ? 0xff0000 : 0xff2d6a); w.sanc.crystal.userData.hurt = Math.max(0, hurt - dt);
   if (G) w.sanc.light.intensity = 2 + 4 * clamp(G.lives / G.maxLives, 0, 1);
   w.portal.ring.rotation.z += dt * 1.5;
+  for (const f of w.anim) f(t);
+  if (w.tutMark.visible) { w.tutMark.children[1].position.y = 1.1 + Math.abs(Math.sin(t * 4)) * 0.3; w.tutMark.children[0].material.opacity = 0.35 + Math.abs(Math.sin(t * 4)) * 0.4; }
+  for (const id in w.heroes) { const h = w.heroes[id]; const ready = !G || (G.heroCd[id] <= 0 && G.energy >= HERO[id].cost); h.label.material.opacity = ready ? 1 : 0.55; h.ring.material.emissiveIntensity = ready ? 0.6 + Math.abs(Math.sin(t * 3)) * 0.8 : 0.15; }
   for (const id in w.heroes) {
     const h = w.heroes[id]; const g = h.group; const i = 'dbpl'.indexOf(id[0]);
     if (h.tail) h.tail.rotation.x = Math.sin(t * 8 + i) * 0.5;
@@ -1705,13 +1885,93 @@ function loop() {
   if (G) { updateHUD(); sheetT -= dt; if (sheetT <= 0 && !$('#sheet').hidden) { sheetT = 0.25; renderSheet(false); } }
 }
 
+
+/* ============ TUTORIAL GUIADO (partida curta) ============ */
+function tutorialConfig() { const w = D.tutorialWorld; return { mode: 'tutorial', title: 'Tutorial · Jardim do Treino', world: w, waves: w.waves, events: {}, choices: [], chests: [], boss: 'nevoa', weatherSeq: ['clear'], hpScale: 0.55, mods: [], seed: 4242, startCoins: w.startCoins, lives: w.lives }; }
+function startTutorial() { startLevel(tutorialConfig()); }
+const N4 = [[1, 0], [-1, 0], [0, 1], [0, -1]], N8 = [...N4, [1, 1], [-1, 1], [1, -1], [-1, -1]];
+const freeCell = (c, r) => c >= 0 && r >= 0 && c < GW && r < GH && G.grid[r * GW + c] === 0;
+function tutTileNearPath(frac) {
+  const p = G.paths[0]; const q = posAt(p, p.len * frac, {}); let best = null, bd = 1e9;
+  for (let r = 0; r < GH; r++) for (let c = 0; c < GW; c++) { if (!freeCell(c, r)) continue; if (!N4.some(([dc, dr]) => { const cc = c + dc, rr = r + dr; return cc >= 0 && rr >= 0 && cc < GW && rr < GH && G.grid[rr * GW + cc] === 1; })) continue; const d = Math.hypot(tileX(c) - q.x, tileZ(r) - q.z); if (d < bd) { bd = d; best = [c, r]; } }
+  return best;
+}
+function tutTileNextTo(t) { if (!t) return tutTileNearPath(0.5); for (const [dc, dr] of N8) if (freeCell(t.c + dc, t.r + dr)) return [t.c + dc, t.r + dr]; return tutTileNearPath(0.5); }
+const TUT = [
+  { hero: 'dash', title: 'Bem-vindo ao Reino!', btn: 'Vamos lá! 🐾', enter: () => { for (const id in G.w3.heroes) G.w3.heroes[id].jump = 0.6; },
+    text: 'O <b>Vazio</b> manda criaturas pelo <b>caminho de terra</b>, do <b>portal roxo</b> 🌀 até o <b>Santuário da Vida</b> (o templo rosa). Cada uma que chega tira ❤️.<br>Nós quatro ficamos nos <b>pedestais</b> ao lado do Santuário: Dash, Bolt, Pino e Luna. Vamos te ensinar a defender!' },
+  { hero: 'dash', title: 'Sua primeira torre', tile: () => tutTileNearPath(0.36), tower: 'agua', done: () => G.towers.some(t => t.def.id === 'agua'),
+    text: 'Toque no <b>quadrado amarelo com a seta</b> e escolha a 💧 <b>Fonte da Vida</b>. Ela atira água e deixa os inimigos <b>lentos</b>.' },
+  { hero: 'bolt', title: 'Chame a onda', hl: '#bWave', wave: 1, done: () => G.wave >= 1 && G.state === 'build',
+    text: 'Agora toque em <b>▶ Onda 1</b>. As torres atiram <b>sozinhas</b>! Cada inimigo derrotado dá 🪙 <b>Moedas de Cuidado</b> para construir mais.' },
+  { hero: 'luna', title: 'Cada torre tem uma função', tile: () => tutTileNextTo(G.towers.find(t => t.def.id === 'agua')), tower: 'escova', coins: 200, done: () => G.towers.some(t => t.def.id === 'escova'),
+    text: 'Toque no quadrado amarelo. Repare nas <b>etiquetas coloridas</b> (<span style="color:#e8394b">Ataque</span>, <span style="color:#e8701f">Área</span>, <span style="color:#2b8ee8">Controle</span>, <span style="color:#2a9d4b">Suporte</span>, <span style="color:#b38600">Economia</span>), nas <b>barras</b> de força e no selo 💡 de recomendada. Construa uma 🪮 <b>Escova Giratória</b> <u>colada</u> na Fonte.' },
+  { hero: 'pino', title: 'Sinergia e melhoria', coins: 150, done: () => G.towers.some(t => t.level >= 2),
+    text: 'Viu a <b>linha rosa 🔗</b>? Fonte + Escova = <b>Banho & Escovação</b>: torres vizinhas certas ficam mais fortes! Agora <b>toque numa torre</b> e use <b>⬆️ Melhorar</b>.' },
+  { hero: 'dash', title: 'Visão de Túnel', hl: '.hero-btn[data-hero=dash]', wave: 2, energy: true, done: () => G.heroUse.dash !== undefined && G.wave >= 2 && G.state === 'build',
+    hint: () => G.state === 'wave' && G.heroUse.dash === undefined && G.enemies.some(e => e.hidden && e.alive) ? '👉 Eles apareceram! Toque no <b>Dash</b> (tecla 1)!' : G.state === 'build' && G.wave >= 2 && G.heroUse.dash === undefined ? '👉 Use o <b>Dash</b> agora para ver o efeito!' : '',
+    text: 'A próxima onda tem <b>Vermes Escondidos</b> 🪱: saem dos <b>buracos</b> no caminho e ficam <b>transparentes</b> — as torres não os enxergam! Toque em <b>▶ Onda 2</b> e use meu poder (botão <b>Dash</b> ou tecla <b>1</b>).' },
+  { hero: 'luna', title: 'Inimigos voadores', tile: () => tutTileNearPath(0.62), tower: 'antipulgas', coins: 130, wave: 3, done: () => G.wave >= 3 && G.state === 'build',
+    text: 'Agora vêm <b>Mosquitos</b> 🦟 que <b>voam</b>! Só torres com o selo 🦟 os atingem (Fonte, Antipulgas, Brinquedo e Farol). Construa uma 🫧 <b>Antipulgas</b> e chame a <b>Onda 3</b>.' },
+  { hero: 'pino', title: 'Investida Relâmpago', hl: '.hero-btn[data-hero=pino]', wave: 4, energy: true, done: () => G.heroUse.pino !== undefined && G.wave >= 4 && G.state === 'build',
+    hint: () => G.heroUse.pino === undefined && (G.state === 'build' && G.wave >= 4 || G.enemies.some(e => e.type === 'gordurinha' && e.alive)) ? '👉 Agora! Toque no <b>Pino</b> (tecla 3)!' : '',
+    text: '<b>Gordurinhas</b> 🍩 têm muita vida. Chame a <b>Onda 4</b> e use minha <b>Investida</b> (botão <b>Pino</b> ou tecla <b>3</b>): corro pelo caminho causando dano e empurrando todo mundo pra trás!' },
+  { hero: 'luna', title: 'Casulo + Olhar Lunar', hl: '.hero-btn[data-hero=bolt],.hero-btn[data-hero=luna]', wave: 5, energy: true, done: () => G.heroUse.bolt !== undefined && G.heroUse.luna !== undefined && G.wave >= 5 && G.state === 'build',
+    hint: () => G.state !== 'wave' && G.wave < 5 ? '' : G.heroUse.bolt === undefined ? '👉 Toque no <b>Bolt</b> (tecla 2)!' : G.heroUse.luna === undefined ? '👉 Agora a <b>Luna</b> (tecla 4)!' : '',
+    text: 'A <b>Sombra do Tédio</b> 🌫️ <b>desanima</b> torres (😴). Chame a <b>Onda 5</b> e use o <b>Casulo</b> do Bolt (tecla <b>2</b>) para proteger e o meu <b>Olhar Lunar</b> (tecla <b>4</b>) para curar. Os dois em até 4s ativam o combo <b>Escudo Lunar</b> ✨!' },
+  { hero: 'dash', title: 'Baús e perguntas', enter: () => spawnChest(), markChest: true, done: () => G.tutChest,
+    text: 'Às vezes surge um <b>baú</b> 🎁 no mapa. Toque nele! Ele traz uma <b>pergunta</b> sobre cuidados com pets: acertar dá moedas, energia, itens e um <b>Cartão de Cuidado</b>. Errar também ensina. 😉' },
+  { hero: 'bolt', title: 'Escolhas estratégicas', enter: () => { runChoice('buildOrUpgrade').then(() => { if (G) G.tutChoice = true; }); }, done: () => G.tutChoice,
+    text: 'Antes de algumas ondas aparece uma <b>escolha</b> ⚖️. Não existe certa ou errada — só estratégias diferentes.' },
+  { hero: 'luna', title: 'Último teste: chefão!', hl: '#bWave', wave: 6, energy: true, coins: 250, done: () => false,
+    text: 'O <b>Chefe de Horda</b> 👑 invoca pulgas. Use tudo o que aprendeu! Dicas: <b>⏩ 1x/2x/3x</b> muda a velocidade, os itens 🧰🍖📯 ficam na barra de baixo e usar os <b>4 heróis em até 15s</b> ativa a <b>Harmonia do Reino</b> 🌈.' }
+];
+function tutNext() {
+  const T = G.tut; T.i++; const st = TUT[T.i]; T.cur = st; T.lastHint = '';
+  document.querySelectorAll('.tut-hl').forEach(e => e.classList.remove('tut-hl')); G.w3.tutMark.visible = false; G.tutTile = null;
+  if (!st) { renderTut(); return; }
+  if (st.coins) G.coins = Math.max(G.coins, st.coins);
+  if (st.energy) { G.energy = 100; for (const k in G.heroCd) G.heroCd[k] = 0; }
+  if (st.tile) { const t = st.tile(); if (t) { G.tutTile = t; G.w3.tutMark.visible = true; G.w3.tutMark.position.set(tileX(t[0]), 0, tileZ(t[1])); } }
+  if (st.enter) st.enter();
+  if (st.markChest && G.chests.length) { const ch = G.chests.at(-1); ch.life = 1e9; G.w3.tutMark.visible = true; G.w3.tutMark.position.set(ch.x, 0.3, ch.z); }
+  if (T.i > 0) Sfx.play('chest');
+  renderTut();
+}
+function tutTick() {
+  const T = G.tut; if (!T || !T.cur) return; const st = T.cur;
+  if (G.tutTile && G.towerAt[G.tutTile[1] * GW + G.tutTile[0]]) { G.w3.tutMark.visible = false; G.tutTile = null; }
+  if (st.done && st.done()) { toast('✅ Passo concluído!', 'teal'); tutNext(); return; }
+  if (st.hint) { const h = st.hint(); if (h !== T.lastHint) { T.lastHint = h; renderTut(); } }
+  if (st.hl && !document.querySelector('.tut-hl')) document.querySelectorAll(st.hl).forEach(e => e.classList.add('tut-hl'));
+  tutAvoid();
+}
+function tutAvoid() {
+  const b = $('#tutBox'); if (!b || b.hidden) return; if (!G.w3.tutMark.visible) { b.classList.remove('flip'); return; } const m = G.w3.tutMark.position;
+  _v.set(m.x, 0.3, m.z).project(camera); const y = (1 - _v.y) / 2 * innerHeight;
+  b.classList.toggle('flip', y > innerHeight * 0.5); // alvo embaixo => caixa em cima, e vice-versa
+}
+function renderTut() {
+  let b = $('#tutBox');
+  if (!b) { b = document.createElement('div'); b.id = 'tutBox'; b.setAttribute('role', 'status'); document.body.appendChild(b);
+    b.addEventListener('click', e => { const a = e.target.closest('[data-tut]'); if (!a || !G || !G.tut) return; Sfx.play('click'); const k = a.dataset.tut; if (k === 'next') tutNext(); else if (k === 'guide') towerGuide(); else if (k === 'skip') { P.tutorialSeen = true; save(); toast('Tutorial pulado. Você pode refazê-lo pelo menu.'); exitToMenu(); } }); }
+  const st = G && G.tut && G.tut.cur; document.body.classList.toggle('tut', !!st);
+  if (!st) { b.hidden = true; return; }
+  const n = TUT.length, i = G.tut.i; b.hidden = false;
+  b.innerHTML = `<div class="hd"><span class="avatar av-${st.hero}">${HERO[st.hero].icon}</span><b>${st.title}</b><span class="prog">Passo ${i + 1}/${n}</span></div><div class="bar"><i style="width:${i / n * 100}%"></i></div>
+   <p>${st.text}</p>${G.tut.lastHint ? `<p class="recbox">${G.tut.lastHint}</p>` : ''}
+   <div class="row">${st.btn ? `<button class="btn green small" data-tut="next">${st.btn}</button>` : ''}${st.tower ? '<button class="btn ghost small" data-tut="guide">📖 Guia de torres</button>' : ''}<span class="spacer"></span><button class="btn ghost small" data-tut="skip">Pular tutorial</button></div>`;
+  if (st.hl) document.querySelectorAll(st.hl).forEach(e => e.classList.add('tut-hl'));
+  announce(st.title);
+}
+
 /* ============ 8. TELAS ============ */
 const scr = () => $('#screen');
 function closeScreen() { scr().hidden = true; }
 function screen(html, onMount) { const s = scr(); s.innerHTML = `<div class="wrap">${html}</div>`; s.hidden = false; s.scrollTop = 0; s.querySelectorAll('[data-go]').forEach(b => b.addEventListener('click', () => { Sfx.play('click'); NAV[b.dataset.go](); })); onMount && onMount(s); const f = s.querySelector('button'); f && f.focus({ preventScroll: true }); }
 const back = (title) => `<div class="topbar"><button class="btn ghost small" data-go="menu" aria-label="Voltar">← Voltar</button><h2>${title}</h2><span class="spacer"></span><span class="badge">🐾 ${P.patinhas}</span><span class="badge">⭐ ${totalStars()}</span></div>`;
 const totalStars = () => Object.values(P.stars).reduce((a, b) => a + b, 0);
-function diorama(wid = 1) { buildWorld(D.worlds[wid - 1], wid * 977); cam.menu = true; cam.zoom = 0.95; cam.target.set(0.4, 0, 0.5); setWeatherVisual(D.worlds[wid - 1].weather[0]); }
+function diorama(wid = 1) { buildWorld(D.worlds[wid - 1], (wid + 1) * 977); cam.menu = true; cam.zoom = 0.95; cam.target.set(0.4, 0, 0.5); setWeatherVisual(D.worlds[wid - 1].weather[0]); }
 
 function showMenu() {
   diorama(Math.min(P.worldUnlocked, 5));
@@ -1721,6 +1981,8 @@ function showMenu() {
    <div class="row" style="justify-content:center"><span class="badge">🐾 ${P.patinhas} Patinhas do Saber</span><span class="badge">⭐ ${totalStars()}/15</span><span class="badge">🃏 ${cardsN}/${ALBUM.length}</span>${P.daily.streak ? `<span class="badge">🔥 ${P.daily.streak} dia(s)</span>` : ''}</div>
    <div class="menu-grid">
     <button class="mbtn main" data-go="campaign"><span class="ic" style="background:#ffffff33">🗺️</span><span><b>Campanha</b><small>5 mundos, 5 chefões. Dash, Bolt, Pino e Luna contam com você!</small></span></button>
+    <button class="mbtn" data-go="tutorial"><span class="ic" style="background:#fff3c4">🎓</span><span><b>Tutorial${P.tutorialSeen ? '' : ' ⭐'}</b><small>${P.tutorialSeen ? 'Refaça a partida guiada (3–5 min)' : 'Comece aqui! Partida guiada de 3–5 min'}</small></span></button>
+    <button class="mbtn" data-go="towerguide"><span class="ic" style="background:#e3f0ff">🏰</span><span><b>Guia de Torres</b><small>Qual torre usar contra cada inimigo</small></span></button>
     <button class="mbtn" data-go="daily"><span class="ic" style="background:#ffe7c2">📅</span><span><b>Desafio Diário</b><small>${P.daily.done === d ? '✅ Concluído hoje!' : 'Mapa e regras novos todo dia'}</small></span></button>
     <button class="mbtn" data-go="weekly"><span class="ic" style="background:#ffd6e3">🗓️</span><span><b>Desafio Semanal</b><small>Mais difícil · recompensa em dobro</small></span></button>
     <button class="mbtn" data-go="clinic"><span class="ic" style="background:#d6f5ef">🏥</span><span><b>Clínica do Conhecimento</b><small>Modo calmo: aprenda e desbloqueie cartões</small></span></button>
@@ -1799,10 +2061,10 @@ function settingsScreen() {
     s.querySelector('#sReset').addEventListener('click', () => { if (confirm('Apagar todo o progresso? Isso não pode ser desfeito.')) { P = defaultProfile(); save(); applyQuality(); showMenu(); } });
   });
 }
-const NAV = { menu: showMenu, campaign: campaignScreen, daily: () => challengeScreen(false), weekly: () => challengeScreen(true), clinic: clinicScreen, cards: cardsScreen, heroes: heroesScreen, shop: shopScreen, achievements: achievementsScreen, settings: settingsScreen };
+const NAV = { menu: showMenu, tutorial: startTutorial, towerguide: () => towerGuide(), campaign: () => { if (!P.tutorialSeen) { showModal(`<h2 id="mTitle">🎓 Primeira vez por aqui?</h2><p>Recomendamos a <b>partida guiada</b> (3–5 min): ela ensina torres, heróis, sinergias, baús e chefões.</p><div class="actions"><button class="btn green" data-close="tut">Fazer o tutorial</button><button class="btn ghost" data-close="skip">Ir direto à campanha</button></div>`).then(v => { if (v === 'tut') startTutorial(); else { P.tutorialSeen = true; save(); campaignScreen(); } }); } else campaignScreen(); }, daily: () => challengeScreen(false), weekly: () => challengeScreen(true), clinic: clinicScreen, cards: cardsScreen, heroes: heroesScreen, shop: shopScreen, achievements: achievementsScreen, settings: settingsScreen };
 
 /* ============ INICIALIZAÇÃO ============ */
-window.__reino = { G: null, D, get P() { return P; }, startLevel, campaignConfig, challengeConfig, callWave, buildTower, useHero, upgradeTower, update: dt => G && update(dt), NAV };
+window.__reino = { tileScreen: (c, r) => { _v.set(tileX(c), 0.15, tileZ(r)).project(camera); return [(_v.x + 1) / 2 * innerWidth, (1 - _v.y) / 2 * innerHeight]; }, worldScreen: (x, y, z) => { _v.set(x, y, z).project(camera); return [(_v.x + 1) / 2 * innerWidth, (1 - _v.y) / 2 * innerHeight]; }, G: null, D, get P() { return P; }, startTutorial, tutNext, startLevel, campaignConfig, challengeConfig, callWave, buildTower, useHero, upgradeTower, update: dt => G && update(dt), NAV };
 addEventListener('resize', fitCamera);
 document.addEventListener('visibilitychange', () => { if (document.hidden && G && !G.over && !G.modalOpen) pauseMenu(); });
 applyQuality(); fitCamera();

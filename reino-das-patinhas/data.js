@@ -120,6 +120,26 @@ window.GAME_DATA = (function () {
     }
   ];
 
+  /* ---------------------------------------------------------------
+     GUIA DAS TORRES (interface): categoria, barras 0–5 (dano, alcance,
+     velocidade), contra quem é boa, limitações e dica de posicionamento.
+     --------------------------------------------------------------- */
+  const towerGuide = {
+    agua:       { cat: 'Controle', bars: [2, 3, 3], good: 'Inimigos rápidos e Calorão (dano x2). Acerta voadores.', weak: 'Pouco dano contra inimigos com muita vida.', tip: 'Coloque no começo do caminho: deixa todo mundo lento para as outras torres.' },
+    tigela:     { cat: 'Área', bars: [2, 3, 2], good: 'Grupos de inimigos juntinhos (pulgas, vermes).', weak: 'Não acerta voadores.', tip: 'Ótima onde os dois caminhos se juntam.' },
+    escova:     { cat: 'Área', bars: [4, 1, 5], good: 'Tudo que passa colado nela; Nózinho leva dano x2.', weak: 'Alcance bem curto. Não acerta voadores.', tip: 'Coloque encostada numa curva do caminho.' },
+    antipulgas: { cat: 'Ataque', bars: [2, 3, 4], good: 'Parasitas (pulga, carrapato, verme, sarna, lombriga): dano x3. Acerta voadores.', weak: 'Fraca contra quem não é parasita.', tip: 'A melhor torre dos mundos 1 e 2.' },
+    brinquedo:  { cat: 'Controle', bars: [1, 3, 3], good: 'Faz inimigos andarem para trás e ficarem lentos. Acerta voadores.', weak: 'Dano baixo: precisa de torres de ataque por perto.', tip: 'Combine com o Osso Bumerangue (sinergia).' },
+    areia:      { cat: 'Controle', bars: [2, 2, 1], good: 'Prende inimigos terrestres no lugar.', weak: 'Não acerta voadores.', tip: 'Perto de torres de área: inimigo preso = alvo fácil.' },
+    relogio:    { cat: 'Economia', bars: [0, 2, 1], good: 'Gera moedas no fim de cada onda.', weak: 'Não causa dano.', tip: 'Construa cedo: quanto antes, mais rende.' },
+    vet:        { cat: 'Suporte', bars: [0, 2, 0], good: 'Revela inimigos ocultos e cura torres desanimadas.', weak: 'Não causa dano.', tip: 'No meio das torres, perto de onde passam ocultos.' },
+    osso:       { cat: 'Área', bars: [3, 3, 2], good: 'Filas de inimigos em retas longas (atravessa todos).', weak: 'Não acerta voadores.', tip: 'Mire ao longo de uma reta do caminho.' },
+    vacina:     { cat: 'Suporte', bars: [1, 2, 1], good: 'Barreira segura inimigos e tira a armadura deles.', weak: 'Pouco dano direto.', tip: 'Perto do Santuário, como última linha de defesa.' },
+    coracao:    { cat: 'Suporte', bars: [0, 2, 0], good: 'Torres vizinhas atiram mais rápido e mais longe.', weak: 'Não causa dano.', tip: 'Cercada por várias torres de ataque.' },
+    farol:      { cat: 'Ataque', bars: [5, 5, 1], good: 'Voadores, chefões e ocultos. Ignora noite e neblina.', weak: 'Atira devagar.', tip: 'Um ou dois por mapa resolvem muitos problemas.' }
+  };
+  towers.forEach(t => Object.assign(t, towerGuide[t.id]));
+
   // Multiplicadores por nível (índice 0 = nível 1)
   const LEVEL_SCALE = {
     dmg:   [1, 1.45, 2.0, 2.7, 3.6],
@@ -285,7 +305,7 @@ window.GAME_DATA = (function () {
      --------------------------------------------------------------- */
   const worlds = [
     {
-      id: 1, name: 'Campina dos Filhotes', boss: 'nevoa', weather: ['clear'], startCoins: 230, lives: 20,
+      id: 1, theme: 'campina', name: 'Campina dos Filhotes', boss: 'nevoa', weather: ['clear'], startCoins: 230, lives: 20,
       palette: { ground: 0x7ccf6a, ground2: 0x6cbf5c, path: 0xe8c995, deco: 0x3f9d4a, sky: 0xbfe8ff, fog: 0xd8f1ff },
       paths: [
         [[0,5],[3,5],[3,1],[10,1],[10,3],[14,3],[14,5],[17,5]],
@@ -310,7 +330,7 @@ window.GAME_DATA = (function () {
       intro: 'A Névoa da Negligência cobriu a Campina! Filhotes precisam de vacinas, vermífugo e muito carinho. Dash, Bolt, Pino e Luna contam com você!'
     },
     {
-      id: 2, name: 'Bosque das Coceirinhas', boss: 'sombraEstresse', weather: ['rain'], startCoins: 260, lives: 20,
+      id: 2, theme: 'bosque', name: 'Bosque das Coceirinhas', boss: 'sombraEstresse', weather: ['rain'], startCoins: 260, lives: 20,
       palette: { ground: 0x4fae8c, ground2: 0x46a07f, path: 0xc9a77c, deco: 0x2e7d5b, sky: 0x9fc7c9, fog: 0xa7c4c4 },
       paths: [
         [[0,1],[5,1],[5,4],[12,4],[12,1],[16,1],[16,9],[17,9]],
@@ -335,7 +355,7 @@ window.GAME_DATA = (function () {
       intro: 'A chuva trouxe coceira ao Bosque! Escovação, controle de parasitas e rotina vão acalmar a Sombra do Estresse.'
     },
     {
-      id: 3, name: 'Pântano do Eco', boss: 'eco', weather: ['fog'], startCoins: 290, lives: 20,
+      id: 3, theme: 'pantano', name: 'Pântano do Eco', boss: 'eco', weather: ['fog'], startCoins: 290, lives: 20,
       palette: { ground: 0x6f8f6a, ground2: 0x67855f, path: 0x9b8c6a, deco: 0x4a5d3f, sky: 0xb7b2c9, fog: 0xc9c4d8 },
       paths: [
         [[0,9],[4,9],[4,6],[1,6],[1,2],[7,2],[7,5],[11,5],[11,1],[17,1]],
@@ -360,7 +380,7 @@ window.GAME_DATA = (function () {
       intro: 'No Pântano, mitos ecoam por todo lado! Só o conhecimento verdadeiro dissipa a neblina do Eco da Confusão.'
     },
     {
-      id: 4, name: 'Cidade das Pressas', boss: 'devorador', weather: ['night'], startCoins: 320, lives: 20,
+      id: 4, theme: 'cidade', name: 'Cidade das Pressas', boss: 'devorador', weather: ['night'], startCoins: 320, lives: 20,
       palette: { ground: 0x5d6d8a, ground2: 0x56657f, path: 0xa3a3b8, deco: 0x3a4660, sky: 0x2b3352, fog: 0x2b3352 },
       paths: [
         [[0,5],[2,5],[2,1],[15,1],[15,5],[17,5]],
@@ -385,7 +405,7 @@ window.GAME_DATA = (function () {
       intro: 'Na Cidade das Pressas ninguém tem tempo para nada! O Devorador do Tempo quer adiar todos os cuidados. Vamos mostrar que prevenção não espera.'
     },
     {
-      id: 5, name: 'Abismo do Vazio', boss: 'vazio', weather: ['storm','night','fog','rain'], startCoins: 360, lives: 20,
+      id: 5, theme: 'abismo', name: 'Abismo do Vazio', boss: 'vazio', weather: ['storm','night','fog','rain'], startCoins: 360, lives: 20,
       palette: { ground: 0x4a3f6b, ground2: 0x433862, path: 0x8e7cc3, deco: 0x2d2350, sky: 0x1b1430, fog: 0x2a2045 },
       paths: [
         [[0,1],[8,1],[8,5],[3,5],[3,9],[17,9]],
@@ -410,6 +430,29 @@ window.GAME_DATA = (function () {
       intro: 'O Abismo muda de clima a cada onda. É a última defesa: tudo o que você aprendeu será testado contra O Vazio!'
     }
   ];
+
+  /* ---------------------------------------------------------------
+     MUNDO DE TUTORIAL (partida guiada curta)
+     --------------------------------------------------------------- */
+  const tutorialWorld = {
+    id: 0, theme: 'campina', name: 'Jardim do Treino', boss: 'nevoa', weather: ['clear'], startCoins: 260, lives: 20,
+    palette: { ground: 0x8edb76, ground2: 0x7fcf68, path: 0xf0d3a0, deco: 0x47a852, sky: 0xc9efff, fog: 0xe1f5ff },
+    paths: [
+      [[0,5],[4,5],[4,2],[12,2],[12,5],[17,5]],
+      [[0,5],[4,5],[4,8],[12,8],[12,5],[17,5]]
+    ],
+    risky: 1, tunnels: [[0, 8], [1, 8]],
+    waves: [
+      'pulga:3:1.8',
+      'verme:4:1.3',
+      'mosquito:5:1.2',
+      'gordurinha:2:3, pulga:5:0.7',
+      'tedio:3:1.8, pulga:4:0.8',
+      'chefeHorda:1:1, pulga:6:0.7, carrapato:2:2'
+    ],
+    events: {}, choices: [], chests: [],
+    intro: 'Treino rápido com Dash, Bolt, Pino e Luna.'
+  };
 
   /* ---------------------------------------------------------------
      ESCOLHAS MORAIS (sem certo/errado — só consequências)
@@ -647,6 +690,6 @@ window.GAME_DATA = (function () {
     { id: 'quiz',     name: 'Dia do Conhecimento', desc: 'Pergunta antes de TODA onda, recompensa dobrada.' }
   ];
 
-  return { towers, LEVEL_SCALE, enemies, bosses, heroes, combos, synergies, weather, worlds, choices,
+  return { towers, tutorialWorld, LEVEL_SCALE, enemies, bosses, heroes, combos, synergies, weather, worlds, choices,
            questions, cards, tips, disclaimer, consumables, relics, cosmetics, achievements, modifiers };
 })();
