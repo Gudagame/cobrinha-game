@@ -6,6 +6,13 @@
 <meta name="theme-color" content="#2b2140">
 <meta name="description" content="Reino das Patinhas: A Última Defesa — Tower Defense 3D educativo sobre saúde e bem-estar de cães e gatos.">
 <title>Reino das Patinhas: A Última Defesa</title>
+<meta property="og:type" content="website">
+<meta property="og:title" content="Reino das Patinhas: A Última Defesa">
+<meta property="og:description" content="Tower Defense 3D educativo: proteja o Santuário com Dash, Bolt, Pino e Luna e aprenda a cuidar de cães e gatos.">
+<meta property="og:image" content="https://reino-das-patas.netlify.app/capa-og.jpg">
+<meta property="og:image:width" content="1200"><meta property="og:image:height" content="675">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://reino-das-patas.netlify.app/capa-og.jpg">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@600;800&display=swap" rel="stylesheet">
@@ -233,6 +240,14 @@ body.tut #toasts{left:auto;right:calc(12px + var(--safe-r));transform:none;width
 body.tut #speech{display:none}
 /* Em sites *.netlify.app o selo “Powered by Netlify” ocupa o canto inferior direito: sobe a barra de baixo */
 body.lift{--lift:88px}
+
+#coverTitle{position:fixed;inset:0;z-index:40;pointer-events:none;display:flex;flex-direction:column;align-items:center;padding-top:3.2vh;text-align:center;color:#fff;font-family:var(--font-title)}
+#coverTitle .kicker{font-family:var(--font);font-weight:800;letter-spacing:.35em;font-size:1.55vw;background:rgba(43,33,64,.55);padding:.45em 1.2em;border-radius:999px;border:2px solid rgba(255,255,255,.35);backdrop-filter:blur(4px)}
+#coverTitle h1{margin:.12em 0 0;font-weight:800;font-size:8.6vw;line-height:.86;letter-spacing:.02em;background:linear-gradient(180deg,#fffbe0 0%,#ffe066 38%,#ffb02e 70%,#ff7a1a 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(.28vw 0 0 #5b1f7a) drop-shadow(-.28vw 0 0 #5b1f7a) drop-shadow(0 .28vw 0 #5b1f7a) drop-shadow(0 -.28vw 0 #5b1f7a) drop-shadow(0 .5vw 0 #3a1255) drop-shadow(0 1.2vw 1.6vw rgba(30,10,60,.55))}
+#coverTitle .sub{margin-top:.15em;font-weight:800;font-size:3.5vw;letter-spacing:.32em;color:#fff;text-shadow:.18vw .18vw 0 #5b1f7a,-.18vw .18vw 0 #5b1f7a,.18vw -.18vw 0 #5b1f7a,-.18vw -.18vw 0 #5b1f7a,0 .45vw 0 #3a1255,0 0 1.8vw rgba(255,120,200,.9)}
+#coverTitle .slogan{margin-top:auto;margin-bottom:3.4vh;font-family:var(--font);font-weight:800;font-size:1.9vw;background:linear-gradient(90deg,#ff5c8a,#ff8a3d);padding:.45em 1.4em;border-radius:999px;box-shadow:0 .4vw 0 #b8325a,0 1vw 2vw rgba(0,0,0,.3);border:3px solid #fff}
+#coverTitle.v{padding-top:4.5vh}
+#coverTitle.v .kicker{font-size:2.6vw}#coverTitle.v h1{font-size:17vw;filter:drop-shadow(.55vw 0 0 #5b1f7a) drop-shadow(-.55vw 0 0 #5b1f7a) drop-shadow(0 .55vw 0 #5b1f7a) drop-shadow(0 -.55vw 0 #5b1f7a) drop-shadow(0 1vw 0 #3a1255)}#coverTitle.v .sub{font-size:6.6vw}#coverTitle.v .slogan{font-size:3.6vw;margin-bottom:5vh}
 /* ==================== RESPONSIVO ==================== */
 @media (max-width:640px){
   .pill{padding:5px 9px;font-size:.88rem;min-height:34px}
@@ -444,6 +459,7 @@ function fitCamera() {
 }
 const _off = new THREE.Vector3();
 function updateCamera(dt) {
+  if (cam.custom) { camera.lookAt(cam.look); return; }
   if (cam.menu) cam.yaw = cam.baseYaw + Math.sin(performance.now() / 6000) * 0.35;
   const d = cam.fit * cam.zoom;
   _off.set(Math.cos(cam.pitch) * Math.sin(cam.yaw), Math.sin(cam.pitch), Math.cos(cam.pitch) * Math.cos(cam.yaw)).multiplyScalar(d);
@@ -2065,13 +2081,79 @@ function settingsScreen() {
 }
 const NAV = { menu: showMenu, tutorial: startTutorial, towerguide: () => towerGuide(), campaign: () => { if (!P.tutorialSeen) { showModal(`<h2 id="mTitle">🎓 Primeira vez por aqui?</h2><p>Recomendamos a <b>partida guiada</b> (3–5 min): ela ensina torres, heróis, sinergias, baús e chefões.</p><div class="actions"><button class="btn green" data-close="tut">Fazer o tutorial</button><button class="btn ghost" data-close="skip">Ir direto à campanha</button></div>`).then(v => { if (v === 'tut') startTutorial(); else { P.tutorialSeen = true; save(); campaignScreen(); } }); } else campaignScreen(); }, daily: () => challengeScreen(false), weekly: () => challengeScreen(true), clinic: clinicScreen, cards: cardsScreen, heroes: heroesScreen, shop: shopScreen, achievements: achievementsScreen, settings: settingsScreen };
 
+
+/* ============ CAPA (key art renderizada com o próprio motor) ============
+   Use: index.html?capa=1 (horizontal) ou ?capa=v (vertical). */
+function skyTexture(stops) {
+  const c = document.createElement('canvas'); c.width = 4; c.height = 512; const x = c.getContext('2d'); const g = x.createLinearGradient(0, 0, 0, 512);
+  stops.forEach(([o, col]) => g.addColorStop(o, col)); x.fillStyle = g; x.fillRect(0, 0, 4, 512);
+  const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+}
+function coverScene(vertical = false) {
+  closeScreen(); $('#hud').hidden = true; G = null;
+  const w3 = buildWorld(D.worlds[0], 4242); rng = mulberry32(77);
+  scene.background = skyTexture([[0, '#2b1d5c'], [0.32, '#7b3fa0'], [0.55, '#ff6f91'], [0.75, '#ffb067'], [1, '#ffe3a3']]);
+  scene.fog = new THREE.Fog(0xffb38a, 22, 62);
+  hemi.color.set(0xffd9c2); hemi.groundColor.set(0x5b3f9a); hemi.intensity = 1.25;
+  sun.color.set(0xffb070); sun.intensity = 3.2; sun.position.set(14, 9, -6);
+  const rim = new THREE.DirectionalLight(0xb39cff, 1.6); rim.position.set(-10, 6, 8); root.add(rim);
+  // esconde heróis/pedestais do mapa
+  for (const id in w3.heroes) { const h = w3.heroes[id]; h.group.visible = false; h.label.visible = false; h.ring.parent.visible = false; }
+  // Santuário ao fundo, à esquerda, maior e brilhando
+  const sc = w3.sanc.group; sc.position.set(-6.2, 0, -4.2); sc.scale.setScalar(2.1); w3.sanc.light.intensity = 14; w3.sanc.light.distance = 14;
+  const glow = mesh(geo('sancGlow', () => new THREE.CircleGeometry(1, 32)), new THREE.MeshBasicMaterial({ color: 0xff8fb8, transparent: true, opacity: 0.35, depthWrite: false }), false); glow.rotation.x = -Math.PI / 2; glow.position.set(sc.position.x, 0.16, sc.position.z); glow.scale.setScalar(3.4); root.add(glow);
+  // O Vazio no céu
+  const vz = buildEnemyMesh(Object.assign({ shape: 'ghost' }, D.bosses.vazio), true); vz.bar.bg.visible = vz.bar.fg.visible = false;
+  vz.bm.color.set(0x3a1a63); vz.bm.emissive.set(0x2a0a55); vz.group.position.set(vertical ? 1.4 : 7.4, vertical ? 1.6 : 1.5, -11); vz.group.scale.setScalar(vertical ? 2.0 : 2.5); vz.body.rotation.y = -Math.PI / 2 - 0.35; root.add(vz.group);
+  const vzl = new THREE.PointLight(0x9b4dff, 40, 18, 1.4); vzl.position.copy(vz.group.position); root.add(vzl);
+  for (let i = 0; i < 4; i++) { const t = mesh(geo('aura', () => new THREE.TorusGeometry(1, 0.06, 4, 28)), mat(0x9b4dff, { emissive: 0x7b2cff, emissiveIntensity: 1.2, transparent: true, opacity: 0.5 - i * 0.1 }), false); t.position.copy(vz.group.position); t.scale.setScalar(2.4 + i * 1.1); t.rotation.set(1.2 + i * 0.2, 0.3 * i, 0); root.add(t); }
+  // exército de criaturas fofas no caminho
+  const army = ['pulga', 'carrapato', 'mosquito', 'petisco', 'gordurinha', 'tedio', 'estressinho', 'mito', 'pulga', 'calorao', 'fogos', 'sarninha', 'lombriga', 'pulga'];
+  army.forEach((k, i) => { const pi = i % 2, path = w3.paths[pi]; const d = 2 + i * 1.55; const q = posAt(path, d, {}); const def = D.enemies[k]; const em = buildEnemyMesh(def, false); em.bar.bg.visible = em.bar.fg.visible = false; em.group.position.set(q.x, 0.12 + (def.tags.includes('flying') ? 1.1 : 0), q.z); em.group.scale.setScalar(1.35); em.body.rotation.y = Math.atan2(-q.dz, q.dx); root.add(em.group); });
+  // torres atirando
+  const picks = [['agua', 0, 0.3], ['escova', 1, 0.35], ['farol', 0, 0.62], ['coracao', 1, 0.6], ['antipulgas', 0, 0.45], ['tigela', 1, 0.8], ['vet', 0, 0.85]];
+  const used = new Set();
+  for (const [id, pi, f] of picks) {
+    const q = posAt(w3.paths[pi], w3.paths[pi].len * f, {}); let best = null, bd = 1e9;
+    for (let r = 0; r < GH; r++) for (let c = 0; c < GW; c++) { if (w3.grid[r * GW + c] !== 0 || used.has(c + ',' + r)) continue; const dd = Math.hypot(tileX(c) - q.x, tileZ(r) - q.z); if (dd < bd) { bd = dd; best = [c, r]; } }
+    if (!best) continue; used.add(best.join()); const tv = buildTowerMesh(TOWER[id]); tv.group.position.set(tileX(best[0]), 0.12, tileZ(best[1])); tv.group.scale.setScalar(1.3); tv.crown.visible = id === 'farol'; root.add(tv.group);
+    const lv = { vis: tv, level: id === 'farol' ? 5 : 3 }; setTowerLevelLook(lv); tv.group.scale.setScalar(1.3 + lv.level * 0.05);
+    if (id === 'farol') beamFxPersist(new THREE.Vector3(tv.group.position.x, 1.8, tv.group.position.z), vz.group.position.clone().add(new THREE.Vector3(-1.2, -0.5, 0)), 0xfff27a);
+    if (id === 'agua') for (let k = 0; k < 5; k++) put(root, mesh(G_SPH(0.12, 8, 6), mat(0x49b6ff, { emissive: 0x1a6bbf, emissiveIntensity: 0.8 }), false), tv.group.position.x + 0.4 + k * 0.35, 1.2 + Math.sin(k) * 0.3, tv.group.position.z - k * 0.25);
+  }
+  // heróis gigantes em primeiro plano
+  const poses = vertical ? { dash: [-1.45, 4.3, 1.05], bolt: [-0.4, 3.7, 0.35], pino: [0.55, 3.85, -0.4], luna: [1.5, 4.4, -1.0] } : { dash: [-3.1, 3.9, 1.05], bolt: [-1.05, 3.5, 0.35], pino: [1.05, 3.6, -0.45], luna: [3.1, 3.9, -1.05] };
+  const heroLights = [];
+  for (const h of D.heroes) {
+    const hm = buildHero(h.id); const [x, z, ry] = poses[h.id]; hm.group.position.set(x, h.id === 'pino' ? 0.55 : 0.05, z); hm.group.rotation.y = -Math.PI / 2 + ry; hm.group.scale.setScalar(vertical ? 1.65 : 2.2); root.add(hm.group);
+    if (h.id === 'pino') for (let k = 0; k < 10; k++) { const s = mesh(geo('ptet', () => new THREE.TetrahedronGeometry(1, 0)), mat(0xffd23f, { emissive: 0xffb800, emissiveIntensity: 1.2 }), false); s.scale.setScalar(0.05 + Math.random() * 0.06); s.position.set(x + (Math.random() - 0.5) * 1.6, 0.6 + Math.random() * 1.6, z + (Math.random() - 0.5) * 1.2); root.add(s); }
+    if (h.id === 'luna') { const l = new THREE.PointLight(0x9fc4ff, 8, 4, 1.5); l.position.set(x, 1.6, z + 0.4); root.add(l); }
+    const sh = mesh(geo('heroShadow', () => new THREE.CircleGeometry(0.9, 18)), new THREE.MeshBasicMaterial({ color: 0x2b2140, transparent: true, opacity: 0.25, depthWrite: false }), false); sh.rotation.x = -Math.PI / 2; sh.position.set(x, 0.03, z); root.add(sh);
+  }
+  // brilhos mágicos no ar
+  const sg = new THREE.BufferGeometry(); const sp = new Float32Array(500 * 3); for (let i = 0; i < 500; i++) sp.set([(Math.random() - 0.5) * 30, Math.random() * 8, (Math.random() - 0.5) * 20], i * 3); sg.setAttribute('position', new THREE.BufferAttribute(sp, 3));
+  root.add(new THREE.Points(sg, new THREE.PointsMaterial({ color: 0xfff1b8, size: 0.09, transparent: true, opacity: 0.9 })));
+  // câmera de cinema: baixa, perto dos heróis, olhando o reino
+  cam.custom = true; camera.fov = vertical ? 50 : 38; camera.updateProjectionMatrix();
+  if (vertical) { camera.position.set(0.05, 3.9, 12.6); cam.look = new THREE.Vector3(0.05, 2.2, 0); } else { camera.position.set(0, 4.2, 12.6); cam.look = new THREE.Vector3(0.3, 1.5, -1); }
+  // título
+  let t = $('#coverTitle'); if (!t) { t = document.createElement('div'); t.id = 'coverTitle'; document.body.appendChild(t); }
+  t.className = vertical ? 'v' : '';
+  t.innerHTML = `<div class="kicker">🐾 TOWER DEFENSE 3D · CÃES & GATOS</div><h1>REINO DAS<br>PATINHAS</h1><div class="sub">A ÚLTIMA DEFESA</div><div class="slogan">Proteja quem te ama. Aprenda a cuidar jogando.</div>`;
+  $('#loading').hidden = true;
+}
+function beamFxPersist(a, b, color) {
+  const len = a.distanceTo(b); for (const [r, op] of [[0.05, 1], [0.16, 0.35], [0.32, 0.15]]) { const m = new THREE.Mesh(G_CYL(r, r, 1, 8), new THREE.MeshBasicMaterial({ color, transparent: true, opacity: op, depthWrite: false })); m.scale.y = len; m.position.copy(a).add(b).multiplyScalar(0.5); m.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), b.clone().sub(a).normalize()); root.add(m); }
+}
+
 /* ============ INICIALIZAÇÃO ============ */
 window.__reino = { tileScreen: (c, r) => { _v.set(tileX(c), 0.15, tileZ(r)).project(camera); return [(_v.x + 1) / 2 * innerWidth, (1 - _v.y) / 2 * innerHeight]; }, worldScreen: (x, y, z) => { _v.set(x, y, z).project(camera); return [(_v.x + 1) / 2 * innerWidth, (1 - _v.y) / 2 * innerHeight]; }, G: null, D, get P() { return P; }, startTutorial, tutNext, startLevel, campaignConfig, challengeConfig, callWave, buildTower, useHero, upgradeTower, update: dt => G && update(dt), NAV };
-addEventListener('resize', fitCamera);
+addEventListener('resize', () => { fitCamera(); if (cam.custom) { camera.aspect = innerWidth / innerHeight; camera.updateProjectionMatrix(); } });
 document.addEventListener('visibilitychange', () => { if (document.hidden && G && !G.over && !G.modalOpen) pauseMenu(); });
 if (/\.netlify\.app$/i.test(location.hostname) || /[?&]lift=1/.test(location.search)) document.body.classList.add('lift');
 applyQuality(); fitCamera();
-showMenu();
+const capa = new URLSearchParams(location.search).get('capa');
+if (capa) coverScene(capa === 'v'); else showMenu();
 renderer.setAnimationLoop(loop);
 $('#loading').hidden = true; window.__reinoReady = true;
 document.addEventListener('pointerdown', () => { Sfx.ensure(); Sfx.music(); }, { once: true });
