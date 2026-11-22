@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+<title>Patrulha Pet</title>
+<style>
+  :root { --bg:#14142a; --fg:#fff; --accent:#ffcf3f; --danger:#ff5a6e; --ok:#4fe39a; }
+  * { box-sizing:border-box; }
+  html,body { margin:0; height:100%; overflow:hidden; background:var(--bg); color:var(--fg);
+    font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; touch-action:none; user-select:none; }
+  canvas#c { display:block; width:100vw; height:100vh; }
+  #hud { position:fixed; inset:0; pointer-events:none; }
+  .top { position:absolute; top:max(10px, env(safe-area-inset-top)); left:16px; right:16px;
+    display:flex; justify-content:space-between; gap:8px; font-weight:800; text-shadow:0 2px 0 #0008; }
+  .pill { background:#0007; border-radius:999px; padding:6px 12px; font-size:15px; white-space:nowrap; }
+  #combo { position:absolute; top:58px; left:50%; transform:translateX(-50%); font-size:26px; font-weight:900;
+    color:var(--accent); text-shadow:0 3px 0 #0009; opacity:0; transition:opacity .2s; }
+  #power { position:absolute; top:96px; left:50%; transform:translateX(-50%); width:min(260px,70vw); }
+  #power .lbl { text-align:center; font-weight:800; font-size:14px; margin-bottom:4px; text-shadow:0 2px 0 #000a; }
+  #power .bar { height:8px; background:#0008; border-radius:8px; overflow:hidden; }
+  #power .fill { height:100%; width:0; background:var(--ok); }
+  #tip { position:absolute; bottom:max(18px, env(safe-area-inset-bottom)); left:50%; transform:translate(-50%, 140%);
+    width:min(520px, calc(100vw - 32px)); background:#fff; color:#1b1b33; border-radius:16px; padding:12px 16px;
+    font-size:15px; line-height:1.35; box-shadow:0 6px 0 #0005; transition:transform .35s cubic-bezier(.34,1.56,.64,1); }
+  #tip.show { transform:translate(-50%, 0); }
+  #tip b { color:#6b3df5; }
+  .pop { position:absolute; font-weight:900; font-size:20px; color:#fff; text-shadow:0 2px 0 #000b;
+    pointer-events:none; transform:translate(-50%,-50%); animation:pop .8s ease-out forwards; }
+  @keyframes pop { 0%{transform:translate(-50%,-50%) scale(.4);opacity:0} 20%{transform:translate(-50%,-90%) scale(1.25);opacity:1}
+    100%{transform:translate(-50%,-220%) scale(1);opacity:0} }
+  .screen { position:fixed; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;
+    gap:14px; padding:16px; text-align:center; background:radial-gradient(circle at 50% 30%, #3b2d7acc, #14142aee); }
+  .screen.hidden { display:none; }
+  .screen h1 { margin:0; font-size:clamp(34px, 9vw, 64px); line-height:1; color:var(--accent); text-shadow:0 5px 0 #0008; }
+  .screen p { margin:0; max-width:480px; opacity:.92; }
+  .btn { pointer-events:auto; border:0; border-radius:16px; padding:14px 28px; font-size:20px; font-weight:900;
+    background:var(--accent); color:#2a1d00; box-shadow:0 6px 0 #a87b00; cursor:pointer; }
+  .btn:active { transform:translateY(4px); box-shadow:0 2px 0 #a87b00; }
+  .legend { display:grid; grid-template-columns:repeat(2, minmax(0,1fr)); gap:6px 14px; font-size:14px; text-align:left; max-width:460px; }
+  .small { font-size:13px; opacity:.75; }
+  #flash { position:fixed; inset:0; background:#fff; opacity:0; pointer-events:none; transition:opacity .15s; }
+</style>
+</head>
+<body>
+<canvas id="c"></canvas>
+<div id="flash"></div>
+<div id="hud">
+  <div class="top">
+    <span class="pill" id="score">0</span>
+    <span class="pill" id="lives">❤❤❤</span>
+    <span class="pill" id="best">🏆 0</span>
+  </div>
+  <div id="combo">x1</div>
+  <div id="power" style="display:none"><div class="lbl" id="powerLbl"></div><div class="bar"><div class="fill" id="powerFill"></div></div></div>
+  <div id="tip"></div>
+</div>
+
+<div class="screen" id="start">
+  <h1>🐾 Patrulha Pet</h1>
+  <p>Você é o <b>Bolota</b>, um vira-lata caramelo. Coma os petiscos saudáveis, fuja das ameaças e use os poderes de prevenção para virar o jogo!</p>
+  <div class="legend">
+    <span>🦴 Petisco = pontos</span><span>💉 Vacina = ameaças vulneráveis</span>
+    <span>🧴 Spray = neutraliza a mais próxima</span><span>💧 Água = escudo + velocidade</span>
+    <span>🎾 Brinquedo = Zoomies + ímã</span><span>🔁 Pegue tudo rápido = combo</span>
+  </div>
+  <button class="btn" id="play">JOGAR</button>
+  <p class="small">Setas / WASD ou deslize o dedo. Conteúdo educativo geral, não substitui o médico-veterinário.</p>
+</div>
+
+<div class="screen hidden" id="over">
+  <h1 id="overTitle">Fim de jogo</h1>
+  <p id="overText"></p>
+  <button class="btn" id="again">JOGAR DE NOVO</button>
+</div>
+
+<script type="importmap">
+{ "imports": { "three": "https://cdn.jsdelivr.net/npm/three@0.170.0/build/three.module.js" } }
+</script>
+<script type="module" src="./main.js"></script>
+</body>
+</html>
